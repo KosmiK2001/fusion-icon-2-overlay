@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit eutils
+inherit toolchain-funcs
 
 DESCRIPTION="Fusion Icon 2 - system tray for switching Compiz window managers"
 HOMEPAGE="https://github.com/user/fusion-icon-2"
