@@ -30,7 +30,8 @@ src_install() {
 	doins "${S}/src/icons/marco.png"
 
 	# Desktop файл
-	domenu "${S}/src/fusion-icon2.desktop"
+	insinto /usr/share/applications
+	doins "${S}/src/fusion-icon2.desktop"
 
 	# Бинарник
 	dobin "${S}/src/fusion-icon2"
