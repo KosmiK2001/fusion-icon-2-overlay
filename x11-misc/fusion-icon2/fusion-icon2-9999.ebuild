@@ -15,7 +15,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="x11-libs/gtkmm:3.0"
+DEPEND="dev-cpp/gtkmm:3.0"
 RDEPEND="${DEPEND}"
 
 src_compile() {
