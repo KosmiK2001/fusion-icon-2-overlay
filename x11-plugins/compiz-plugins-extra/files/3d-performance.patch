@@ -1,0 +1,110 @@
+--- /tmp/compiz-plugins-extra-0.8.18/src/3d/3d.c	2020-02-11 14:24:26.000000000 +0300
++++ src/3d/3d.c	2026-07-27 02:03:26.824133168 +0300
+@@ -83,6 +83,10 @@
+     Bool withDepth;
+ 
+     CompTransform bTransform;
++
++    /* Performance caching */
++    CompPlugin *cubeAddon;        /* Cached cubeaddon plugin reference */
++    Bool        cubeAddonChecked; /* Whether we've looked up cubeaddon */
+ } tdScreen;
+ 
+ #define GET_TD_DISPLAY(d)       \
+@@ -289,7 +293,7 @@
+ 		 wx + ww - 0.01, wy + DOBEVEL (Bottomright));
+ 
+ 	/* Top left bevel */
+-	if (tdGetBevelTopleft (s))
++	if (bevel > 0 && tdGetBevelTopleft (s))
+ 	{
+ 	    ADDBEVELQUAD (wx + bevel / 2.0f,
+ 			  wy + bevel - bevel / 1.2f,
+@@ -304,7 +308,7 @@
+ 	}
+ 
+ 	/* Bottom left bevel */
+-	if (tdGetBevelBottomleft (s))
++	if (bevel > 0 && tdGetBevelBottomleft (s))
+ 	{
+ 	    ADDBEVELQUAD (wx + bevel / 2.0f,
+ 			  wy + wh - bevel + bevel / 1.2f,
+@@ -318,7 +322,7 @@
+ 	}
+ 
+ 	/* Bottom right bevel */
+-	if (tdGetBevelBottomright (s))
++	if (bevel > 0 && tdGetBevelBottomright (s))
+ 	{
+ 	    ADDBEVELQUAD (wx + ww - bevel / 2.0f,
+ 			  wy + wh - bevel + bevel / 1.2f,
+@@ -333,7 +337,7 @@
+ 	}
+ 
+ 	/* Top right bevel */
+-	if (tdGetBevelTopright (s))
++	if (bevel > 0 && tdGetBevelTopright (s))
+ 	{
+ 	    ADDBEVELQUAD (wx + ww - bevel, wy,
+ 			  wx + ww - bevel / 2.0f,
+@@ -626,22 +630,25 @@
+ 
+     if (tds->active)
+     {
+-	CompPlugin *p;
+-
+ 	mask |= PAINT_SCREEN_TRANSFORMED_MASK |
+-	        PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_MASK |
+-		PAINT_SCREEN_NO_OCCLUSION_DETECTION_MASK;
++	        PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_MASK;
+ 
+ 	tds->withDepth = TRUE;
+-	
+-	p = findActivePlugin ("cubeaddon");
+-	if (p && p->vTable->getObjectOptions)
++
++	/* Cache cubeaddon plugin lookup - only search once per session */
++	if (!tds->cubeAddonChecked)
++	{
++	    tds->cubeAddon = findActivePlugin ("cubeaddon");
++	    tds->cubeAddonChecked = TRUE;
++	}
++
++	if (tds->cubeAddon && tds->cubeAddon->vTable->getObjectOptions)
+ 	{
+ 	    CompOption *option;
+ 	    int	       nOption;
+ 
+-	    option = (*p->vTable->getObjectOptions) (p, (CompObject *)s,
+-						     &nOption);
++	    option = (*tds->cubeAddon->vTable->getObjectOptions) (
++			 tds->cubeAddon, (CompObject *)s, &nOption);
+ 	    option = compFindOption (option, nOption, "deformation", 0);
+ 
+ 	    if (option)
+@@ -662,11 +669,9 @@
+ {
+     TD_SCREEN (s);
+ 
+-    if (tds->active && tds->damage)
+-    {
+-	tds->damage = FALSE;
+-	damageScreen (s);
+-    }
++    /* Skip damageScreen() - the nvidia tearing patch already forces
++     * COMP_SCREEN_DAMAGE_ALL_MASK every frame, so calling damageScreen()
++     * here creates double damage overhead */
+ 
+     UNWRAP (tds, s, donePaintScreen);
+     (*s->donePaintScreen) (s);
+@@ -741,6 +746,10 @@
+     tds->active     = FALSE;
+     tds->painting3D = FALSE;
+ 
++    /* Initialize performance caching fields */
++    tds->cubeAddon        = NULL;
++    tds->cubeAddonChecked = FALSE;
++
+     s->base.privates[tdd->screenPrivateIndex].ptr = tds;
+ 
+     WRAP (tds, s, paintWindow, tdPaintWindow);
