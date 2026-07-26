@@ -16,10 +16,10 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+upx"
 
 DEPEND="dev-cpp/gtkmm:3.0
-	media-gfx/rsvg
+	media-gfx/librsvg
 	media-gfx/imagemagick"
 RDEPEND="${DEPEND}
-	media-gfx/rsvg"
+	media-gfx/librsvg"
 
 src_compile() {
 	cd "${S}/src"
