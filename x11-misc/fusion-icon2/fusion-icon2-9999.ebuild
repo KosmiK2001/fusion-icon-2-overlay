@@ -27,4 +27,8 @@ src_install() {
 	local bin="${S}/src/fusion_icon.bin"
 	use upx && upx --best "${bin}"
 	dobin "${bin}"
+
+	# Install marco icon
+	insinto /usr/share/icons/hicolor/48x48/apps
+	doins "${FILESDIR}/marco.png"
 }
