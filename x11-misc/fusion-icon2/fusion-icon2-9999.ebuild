@@ -20,16 +20,15 @@ RDEPEND="${DEPEND}"
 
 src_compile() {
 	cd "${S}/src"
-	emake
+	emake ICON_DIR="/usr/share/fusion-icon2"
 }
 
 src_install() {
-	local bin="${S}/src/fusion_icon.bin"
-	use upx && upx --best "${bin}"
-	dobin "${bin}"
-
-	# Install icons
+	# Иконки
 	insinto /usr/share/fusion-icon2
 	doins "${S}/src/icons/fusion-icon.png"
 	doins "${S}/src/icons/marco.png"
+
+	# Бинарник (upx уже применён в Makefile)
+	dobin "${S}/src/fusion-icon2"
 }
