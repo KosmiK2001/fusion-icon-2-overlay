@@ -28,7 +28,8 @@ src_install() {
 	use upx && upx --best "${bin}"
 	dobin "${bin}"
 
-	# Install marco icon
-	insinto /usr/share/icons/hicolor/48x48/apps
-	doins "${FILESDIR}/marco.png"
+	# Install icons
+	insinto /usr/share/fusion-icon2
+	doins "${S}/src/icons/fusion-icon.png"
+	doins "${S}/src/icons/marco.png"
 }
