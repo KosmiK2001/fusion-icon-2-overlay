@@ -4,8 +4,25 @@
 	<email>kosmik2001@gmail.com</email>
 	<name>KosmiK2001</name>
 	<description>
-		Fusion Icon 2 - system tray for switching Compiz window managers
+		Fusion Icon 2 - system tray for switching Compiz window managers.
+		Supports Compiz, Marco, Metacity with Emerald/GTK decorators.
+		Includes NVIDIA Force Composition Pipeline options.
 	</description>
+	<longdescription>
+[EN] Fusion Icon 2 is a GTK3 system tray utility for switching between Compiz,
+Marco, and Metacity window managers. Features include window decorator selection
+(Emerald, GTK Window Decorator), Compiz Options (Indirect Rendering, Loose Binding),
+NVIDIA Options (Force Composition Pipeline, Force Full Composition Pipeline),
+auto-detection of current WM/decorator, persistent settings via config file or GSettings,
+and debug mode with GPU/driver information.
+
+[RU] Fusion Icon 2 — GTK3 системный трей для переключения между оконными
+менеджерами Compiz, Marco и Metacity. Возможности: выбор декоратора окон
+(Emerald, GTK Window Decorator), Compiz Options (Indirect Rendering, Loose Binding),
+NVIDIA Options (Force Composition Pipeline, Force Full Composition Pipeline),
+авто-определение текущего WM/декоратора, сохранение настроек в конфиг-файле
+или GSettings, debug режим с информацией о GPU/драйвере.
+	</longdescription>
 	<use>
 		<flag name="file">
 			Store settings in a plain text config file
