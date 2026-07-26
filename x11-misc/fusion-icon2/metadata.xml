@@ -6,6 +6,20 @@
 	<description>
 		Fusion Icon 2 - system tray for switching Compiz window managers
 	</description>
+	<use>
+		<flag name="file">
+			Store settings in a plain text config file
+			(~/.config/fusion-icon2/config). This is the default backend.
+		</flag>
+		<flag name="gsettings">
+			Store settings using GSettings/dconf instead of a plain file.
+			Provides integration with GNOME/MATE desktop settings.
+			Mutually exclusive with the file USE flag.
+		</flag>
+		<flag name="upx">
+			Compress the binary with UPX for smaller size.
+		</flag>
+	</use>
 	<upstream>
 		<remote-id type="github">KosmiK2001/fusion-icon-2</remote-id>
 	</upstream>

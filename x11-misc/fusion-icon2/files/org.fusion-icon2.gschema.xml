@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.fusion-icon2" path="/org/fusion-icon2/">
+    <key name="selected-wm" type="s">
+      <default>''</default>
+      <summary>Selected Window Manager</summary>
+      <description>The window manager currently selected</description>
+    </key>
+    <key name="selected-decorator" type="s">
+      <default>''</default>
+      <summary>Selected Window Decorator</summary>
+      <description>The window decorator currently selected</description>
+    </key>
+    <key name="indirect-rendering" type="b">
+      <default>false</default>
+      <summary>Indirect Rendering</summary>
+      <description>Compiz indirect rendering option</description>
+    </key>
+    <key name="loose-binding" type="b">
+      <default>false</default>
+      <summary>Loose Binding</summary>
+      <description>Compiz loose binding option</description>
+    </key>
+    <key name="force-composition-pipeline" type="b">
+      <default>false</default>
+      <summary>Force Composition Pipeline</summary>
+      <description>NVIDIA Force Composition Pipeline</description>
+    </key>
+    <key name="force-full-composition-pipeline" type="b">
+      <default>false</default>
+      <summary>Force Full Composition Pipeline</summary>
+      <description>NVIDIA Force Full Composition Pipeline</description>
+    </key>
+  </schema>
+</schemalist>

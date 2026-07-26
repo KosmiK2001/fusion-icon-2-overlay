@@ -13,23 +13,28 @@ EGIT_BRANCH="main"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+upx"
+IUSE="+upx +file -gsettings"
+
+# Взаимоисключающие: file и gsettings
+REQUIRED_USE="?? ( file gsettings )"
 
 DEPEND="dev-cpp/gtkmm:3.0
 	gnome-base/librsvg
-	media-gfx/imagemagick"
+	media-gfx/imagemagick
+	gsettings? ( dev-libs/glib:2 )"
 RDEPEND="${DEPEND}
 	gnome-base/librsvg"
 
 src_compile() {
 	cd "${S}/src"
-	emake ICON_DIR="/usr/share/fusion-icon2"
+	local emake_args=(ICON_DIR="/usr/share/fusion-icon2")
+	use gsettings && emake_args+=(USE_GSETTINGS=1)
+	emake "${emake_args[@]}"
 }
 
 src_install() {
 	local sizes="16 22 24 32 48 64 128 256"
 
-	# Генерируем PNG из SVG для всех размеров
 	for size in ${sizes}; do
 		insinto "/usr/share/icons/hicolor/${size}x${size}/apps"
 		rsvg-convert -w ${size} -h ${size} "${S}/src/icons/marco.svg" -o "${T}/marco-${size}.png"
@@ -38,28 +43,31 @@ src_install() {
 		doins "${T}/nvidia-${size}.png"
 	done
 
-	# SVG и фиксированная иконка приложения
 	insinto /usr/share/fusion-icon2
 	doins "${S}/src/icons/marco.svg"
 	doins "${S}/src/icons/nvidia.svg"
 	doins "${S}/src/icons/fusion-icon.png"
 
-	# Генерируем nvidia.png и marco.png для ICON_DIR
 	rsvg-convert -w 48 -h 48 "${S}/src/icons/nvidia.svg" -o "${T}/nvidia.png"
 	rsvg-convert -w 48 -h 48 "${S}/src/icons/marco.svg" -o "${T}/marco.png"
 	insinto /usr/share/fusion-icon2
 	doins "${T}/nvidia.png"
 	doins "${T}/marco.png"
 
-	# Desktop файл
+	if use gsettings; then
+		insinto /usr/share/glib-2.0/schemas
+		doins "${FILESDIR}/org.fusion-icon2.gschema.xml"
+	fi
+
 	insinto /usr/share/applications
 	doins "${S}/src/fusion-icon2.desktop"
 
-	# Бинарник
 	dobin "${S}/src/fusion-icon2"
 }
 
 pkg_postinst() {
-	ewarn "Обновляем кэш иконок..."
 	gtk-update-icon-cache -f -t /usr/share/icons/hicolor 2>/dev/null || true
+	if use gsettings; then
+		glib-compile-schemas /usr/share/glib-2.0/schemas 2>/dev/null || true
+	fi
 }
