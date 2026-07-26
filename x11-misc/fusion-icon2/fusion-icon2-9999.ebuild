@@ -44,10 +44,12 @@ src_install() {
 	doins "${S}/src/icons/nvidia.svg"
 	doins "${S}/src/icons/fusion-icon.png"
 
-	# Генерируем nvidia.png для ICON_DIR
+	# Генерируем nvidia.png и marco.png для ICON_DIR
 	rsvg-convert -w 48 -h 48 "${S}/src/icons/nvidia.svg" -o "${T}/nvidia.png"
+	rsvg-convert -w 48 -h 48 "${S}/src/icons/marco.svg" -o "${T}/marco.png"
 	insinto /usr/share/fusion-icon2
 	doins "${T}/nvidia.png"
+	doins "${T}/marco.png"
 
 	# Desktop файл
 	insinto /usr/share/applications
