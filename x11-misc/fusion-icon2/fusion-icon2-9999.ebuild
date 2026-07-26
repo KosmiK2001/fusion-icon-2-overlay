@@ -29,6 +29,9 @@ src_install() {
 	doins "${S}/src/icons/fusion-icon.png"
 	doins "${S}/src/icons/marco.png"
 
-	# Бинарник (upx уже применён в Makefile)
+	# Desktop файл
+	domenu "${S}/src/fusion-icon2.desktop"
+
+	# Бинарник
 	dobin "${S}/src/fusion-icon2"
 }
