@@ -56,3 +56,8 @@ src_install() {
 	# Бинарник
 	dobin "${S}/src/fusion-icon2"
 }
+
+pkg_postinst() {
+	ewarn "Обновляем кэш иконок..."
+	gtk-update-icon-cache -f -t /usr/share/icons/hicolor 2>/dev/null || true
+}
