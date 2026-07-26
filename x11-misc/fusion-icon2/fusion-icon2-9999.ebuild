@@ -29,16 +29,19 @@ src_compile() {
 src_install() {
 	local sizes="16 22 24 32 48 64 128 256"
 
-	# Генерируем PNG из marco.svg для всех размеров
+	# Генерируем PNG из SVG для всех размеров
 	for size in ${sizes}; do
 		insinto "/usr/share/icons/hicolor/${size}x${size}/apps"
 		rsvg-convert -w ${size} -h ${size} "${S}/src/icons/marco.svg" -o "${T}/marco-${size}.png"
 		doins "${T}/marco-${size}.png"
+		rsvg-convert -w ${size} -h ${size} "${S}/src/icons/nvidia.svg" -o "${T}/nvidia-${size}.png"
+		doins "${T}/nvidia-${size}.png"
 	done
 
 	# SVG и фиксированная иконка приложения
 	insinto /usr/share/fusion-icon2
 	doins "${S}/src/icons/marco.svg"
+	doins "${S}/src/icons/nvidia.svg"
 	doins "${S}/src/icons/fusion-icon.png"
 
 	# Desktop файл
