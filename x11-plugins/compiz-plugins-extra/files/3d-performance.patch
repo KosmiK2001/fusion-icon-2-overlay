@@ -47,6 +47,15 @@
  	{
  	    ADDBEVELQUAD (wx + ww - bevel, wy,
  			  wx + ww - bevel / 2.0f,
+@@ -609,7 +613,7 @@
+ 	       (order == BTF && (!ftb1 || !ftb2)) || rv;
+     }
+ 
+-    return TRUE;
++    return rv;
+ }
+ 
+ static Bool
 @@ -626,22 +630,25 @@
  
      if (tds->active)
