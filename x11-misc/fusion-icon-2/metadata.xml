@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<description>
+		Fusion Icon 2 - system tray for switching Compiz window managers
+	</description>
+	<upstream>
+		<remote-id type="github">KosmiK2001/fusion-icon-2</remote-id>
+	</upstream>
+</pkgmetadata>
