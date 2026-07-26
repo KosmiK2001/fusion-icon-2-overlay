@@ -13,7 +13,7 @@ EGIT_BRANCH="main"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="+upx"
 
 DEPEND="dev-cpp/gtkmm:3.0"
 RDEPEND="${DEPEND}"
@@ -24,5 +24,7 @@ src_compile() {
 }
 
 src_install() {
-	dobin "${S}/src/fusion_icon.bin"
+	local bin="${S}/src/fusion_icon.bin"
+	use upx && upx --best "${bin}"
+	dobin "${bin}"
 }
