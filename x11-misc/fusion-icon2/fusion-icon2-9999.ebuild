@@ -15,8 +15,11 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+upx"
 
-DEPEND="dev-cpp/gtkmm:3.0"
-RDEPEND="${DEPEND}"
+DEPEND="dev-cpp/gtkmm:3.0
+	media-gfx/rsvg
+	media-gfx/imagemagick"
+RDEPEND="${DEPEND}
+	media-gfx/rsvg"
 
 src_compile() {
 	cd "${S}/src"
@@ -24,10 +27,19 @@ src_compile() {
 }
 
 src_install() {
-	# Иконки
+	local sizes="16 22 24 32 48 64 128 256"
+
+	# Генерируем PNG из marco.svg для всех размеров
+	for size in ${sizes}; do
+		insinto "/usr/share/icons/hicolor/${size}x${size}/apps"
+		rsvg-convert -w ${size} -h ${size} "${S}/src/icons/marco.svg" -o "${T}/marco-${size}.png"
+		doins "${T}/marco-${size}.png"
+	done
+
+	# SVG и фиксированная иконка приложения
 	insinto /usr/share/fusion-icon2
+	doins "${S}/src/icons/marco.svg"
 	doins "${S}/src/icons/fusion-icon.png"
-	doins "${S}/src/icons/marco.png"
 
 	# Desktop файл
 	insinto /usr/share/applications
