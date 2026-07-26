@@ -1,0 +1,11 @@
+--- a/src/wallpaper/wallpaper.c
++++ b/src/wallpaper/wallpaper.c
+@@ -35,6 +35,8 @@
+ 
+ #include "wallpaper_options.h"
+ 
++#include <stdlib.h>
++
+ typedef struct _WallpaperBackground
+ {
+     CompSize size;

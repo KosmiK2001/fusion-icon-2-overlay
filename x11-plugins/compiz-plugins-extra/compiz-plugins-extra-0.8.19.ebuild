@@ -37,8 +37,11 @@ S="${WORKDIR}/${PN}-0.8.18"
 src_prepare() {
 	default
 
+	# Fix missing stdlib.h include in wallpaper.c (RAND_MAX undeclared)
+	eapply "${FILESDIR}/stdlib-fix.patch"
+
 	# Apply 3D plugin performance optimization
-	# Fixes FPS drops when using nvidia tearing patch with3D Windows plugin
+	# Fixes FPS drops when using nvidia tearing patch with 3D Windows plugin
 	eapply "${FILESDIR}/3d-performance.patch"
 
 	eautoreconf
