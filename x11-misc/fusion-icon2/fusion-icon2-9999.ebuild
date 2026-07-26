@@ -3,11 +3,12 @@
 
 EAPI=8
 
-inherit toolchain-funcs
+inherit git-r3
 
 DESCRIPTION="Fusion Icon 2 - system tray for switching Compiz window managers"
-HOMEPAGE="https://github.com/user/fusion-icon-2"
-SRC_URI=""
+HOMEPAGE="https://github.com/KosmiK2001/fusion-icon-2"
+EGIT_REPO_URI="https://github.com/KosmiK2001/fusion-icon-2.git"
+EGIT_BRANCH="main"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -18,12 +19,10 @@ DEPEND="x11-libs/gtkmm:3.0"
 RDEPEND="${DEPEND}"
 
 src_compile() {
+	cd "${S}/src"
 	emake
 }
 
 src_install() {
-	dobin fusion_icon.bin
-	dodir /usr/share/icons/hicolor/48x48/apps
-	insinto /usr/share/icons/hicolor/48x48/apps
-	doins "${FILESDIR}/fusion-icon.png" 2>/dev/null || true
+	dobin "${S}/src/fusion_icon.bin"
 }
