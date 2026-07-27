@@ -39,3 +39,20 @@
  
  	close(fd);
  
+@@ -719,13 +719,13 @@
+ 			j = j - (i + 3);
+ 			tmpcmd[i] = '\0';
+-			ret = asprintf(&command, "cat %s | %s%s%s",
+-						RAWFILE, tmpcmd, fullpath, &tmpcmd[i+3+j]);
++			ret = asprintf(&command, "cat '%s' | %s'%s'%s",
++						RAWFILE, tmpcmd, fullpath, &tmpcmd[i+3+j]);
+ 			break;
+ 		}
+ 	}
+ 
+ 	if (!found)
+-		ret = asprintf(&command, "cat %s | avconv -i - %s", RAWFILE, fullpath);
++		ret = asprintf(&command, "cat '%s' | avconv -i - '%s'", RAWFILE, fullpath);
+ 
+ 	if (ret > 0)
+ 		ret = system(command);
