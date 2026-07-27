@@ -1,0 +1,24 @@
+diff --git a/src/core.c b/src/core.c
+index 6b69a28..73d5515 100644
+--- a/src/core.c
++++ b/src/core.c
+@@ -24,6 +24,7 @@
+  */
+ 
+ #include <string.h>
++#include <stdlib.h>
+ 
+ #include <compiz-core.h>
+ 
+diff --git a/src/metadata.c b/src/metadata.c
+index 3c1fa9f..d7a0184 100644
+--- a/src/metadata.c
++++ b/src/metadata.c
+@@ -26,6 +26,7 @@
+  */
+ 
+ #include <string.h>
++#include <stdlib.h>
+ #include <libxml/tree.h>
+ #include <libxml/xpath.h>
+ #include <libxml/xpathInternals.h>

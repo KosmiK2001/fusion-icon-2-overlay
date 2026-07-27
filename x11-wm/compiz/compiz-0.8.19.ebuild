@@ -68,6 +68,7 @@ RDEPEND="${COMMONDEPEND}"
 
 src_prepare() {
 	default
+	eapply "${FILESDIR}/stdlib-fix.patch"
 	eautoreconf
 }
 

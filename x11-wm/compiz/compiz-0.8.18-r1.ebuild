@@ -7,7 +7,7 @@ inherit autotools gnome2-utils
 
 DESCRIPTION="OpenGL window and compositing manager"
 HOMEPAGE="https://github.com/KosmiK2001/compiz"
-SRC_URI="https://github.com/KosmiK2001/compiz/releases/download/${PV}/${P}.tar.xz"
+SRC_URI="https://github.com/KosmiK2001/compiz/releases/download/0.8.18/compiz-0.8.18.tar.xz -> ${P}.tar.xz"
 
 LICENSE="GPL-2+ LGPL-2.1 MIT"
 SLOT="0"
@@ -66,8 +66,11 @@ DEPEND="${COMMONDEPEND}
 
 RDEPEND="${COMMONDEPEND}"
 
+S="${WORKDIR}/compiz-0.8.18"
+
 src_prepare() {
 	default
+	eapply "${FILESDIR}/stdlib-fix.patch"
 	eapply "${FILESDIR}/nvidia_tearing.patch"
 	eautoreconf
 }
