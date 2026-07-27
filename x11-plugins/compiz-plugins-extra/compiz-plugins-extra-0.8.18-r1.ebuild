@@ -43,6 +43,9 @@ src_prepare() {
 	# 3D Windows plugin performance optimizations
 	eapply "${FILESDIR}/3d-performance.patch"
 
+	# Add FPS setting to vidcap plugin
+	eapply "${FILESDIR}/vidcap-fps.patch"
+
 	eautoreconf
 }
 

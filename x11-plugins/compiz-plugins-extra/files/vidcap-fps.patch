@@ -1,0 +1,41 @@
+--- a/metadata/vidcap.xml.in
++++ b/metadata/vidcap.xml.in
+@@ -21,6 +21,13 @@
+ 				<_long>Command to be used for encoding video. Use a dash (-) for the input file and %f.ext for the output file</_long>
+ 				<default>ffmpeg -i - %f.mp4</default>
+ 			</option>
++			<option name="fps" type="int">
++				<_short>FPS</_short>
++				<_long>Frames per second for recording</_long>
++				<default>30</default>
++				<min>1</min>
++				<max>120</max>
++			</option>
+ 			<option name="draw_indicator" type="bool">
+ 				<_short>Draw Status Indicator</_short>
+ 				<_long>Draw color coded status dot</_long>
+--- a/src/vidcap/vidcap.c
++++ b/src/vidcap/vidcap.c
+@@ -570,11 +570,11 @@
+ }
+ 
+ static int
+-write_file(int fd)
++write_file(int fd, int fps)
+ {
+ 	struct wcap_decoder *decoder = wcap_decoder_create(WCAPFILE);
+ 	int i, has_frame;
+-	int num = 30, denom = 1;
++	int num = fps, denom = 1;
+ 	uint32_t msecs, frame_time;
+ 	FILE *f;
+ 	char *header;
+@@ -648,7 +648,7 @@
+ 		goto out;
+ 	}
+ 
+-	ret = write_file(fd);
++	ret = write_file(fd, vidcapGetFps(d));
+ 
+ 	close(fd);
+ 
