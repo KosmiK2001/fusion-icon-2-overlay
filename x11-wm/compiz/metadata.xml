@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<description>
+		Compiz 0.8.x (compiz-reloaded) with nvidia tearing fix.
+	</description>
+	<use>
+		<flag name="fuse">Enables support for the filesystem in userspace plugin through <pkg>sys-fs/fuse</pkg>.</flag>
+		<flag name="gsettings">Enable gsettings gwd support</flag>
+		<flag name="gtk">Build the gtk window decorator</flag>
+		<flag name="gtk3">Build with GTK+3 instead of GTK+2</flag>
+		<flag name="marco">Enable marco theme support</flag>
+		<flag name="mate">Build MATE compatibility plugin</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">KosmiK2001/compiz</remote-id>
+	</upstream>
+</pkgmetadata>
