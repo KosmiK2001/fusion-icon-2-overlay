@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>kosmik2001@gmail.com</email>
+		<name>KosmiK2001</name>
+	</maintainer>
+	<longdescription>
+		Compiz Window Manager Extra Plugins with performance fixes
+		for 3D Windows plugin (nvidia tearing patch compatibility).
+	</longdescription>
+	<upstream>
+		<remote-id type="github">KosmiK2001/compiz-plugins-extra</remote-id>
+		<remote-id type="gitlab">compiz/compiz-plugins-extra</remote-id>
+	</upstream>
+</pkgmetadata>

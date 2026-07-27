@@ -3,16 +3,16 @@
 
 EAPI=7
 
-inherit autotools gnome2-utils
+inherit autotools gnome2-utils git-r3
 
-MY_PV="0.8.19"
-DESCRIPTION="Compiz Window Manager: Extra Plugins (with performance fixes)"
+DESCRIPTION="Compiz Window Manager: Extra Plugins (live from main)"
 HOMEPAGE="https://github.com/KosmiK2001/compiz-plugins-extra"
-SRC_URI="https://github.com/KosmiK2001/${PN}/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+EGIT_REPO_URI="https://github.com/KosmiK2001/${PN}.git"
+EGIT_BRANCH="main"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE="libnotify"
 
 RDEPEND="
@@ -32,8 +32,6 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gettext-0.15
 	virtual/pkgconfig
 "
-
-S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default

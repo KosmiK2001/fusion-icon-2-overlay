@@ -5,10 +5,9 @@ EAPI=7
 
 inherit autotools gnome2-utils
 
-MY_PV="0.8.19"
-DESCRIPTION="Compiz Window Manager: Extra Plugins (with performance fixes)"
-HOMEPAGE="https://github.com/KosmiK2001/compiz-plugins-extra"
-SRC_URI="https://github.com/KosmiK2001/${PN}/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+DESCRIPTION="Compiz Window Manager: Extra Plugins"
+HOMEPAGE="https://gitlab.com/compiz"
+SRC_URI="https://gitlab.com/compiz/${PN}/uploads/b53eb95252331d53b42231778f55de44/${P/-r1/}.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0"
@@ -33,10 +32,17 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-S="${WORKDIR}/${PN}-${MY_PV}"
+S="${WORKDIR}/${PN}-0.8.18"
 
 src_prepare() {
 	default
+
+	# Fix missing stdlib.h include in wallpaper.c (RAND_MAX undeclared)
+	eapply "${FILESDIR}/stdlib-fix.patch"
+
+	# 3D Windows plugin performance optimizations
+	eapply "${FILESDIR}/3d-performance.patch"
+
 	eautoreconf
 }
 
