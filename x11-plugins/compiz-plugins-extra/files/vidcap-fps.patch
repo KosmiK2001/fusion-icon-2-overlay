@@ -16,7 +16,7 @@
  				<_long>Draw color coded status dot</_long>
 --- a/src/vidcap/vidcap.c
 +++ b/src/vidcap/vidcap.c
-@@ -570,11 +570,11 @@
+@@ -570,14 +570,21 @@
  }
  
  static int
@@ -30,7 +30,20 @@
  	uint32_t msecs, frame_time;
  	FILE *f;
  	char *header;
-@@ -648,7 +648,7 @@
+ 	int size, ret;
+ 
+ 	compLogMessage("vidcap", CompLogLevelInfo, "Decoding");
+ 
++	if (!decoder) {
++		compLogMessage("vidcap", CompLogLevelError,
++			"Failed to open wcap file '%s'", WCAPFILE);
++		return -1;
++	}
++
+ 	size = asprintf(&header, "YUV4MPEG2 C420jpeg W%d H%d F%d:%d Ip A0:0\n",
+ 							decoder->width, decoder->height, num, denom);
+ 	f = fdopen(fd, "w");
+@@ -648,7 +655,7 @@
  		goto out;
  	}
  
@@ -39,7 +52,7 @@
  
  	close(fd);
  
-@@ -719,13 +719,13 @@
+@@ -719,13 +726,13 @@
  			j = j - (i + 3);
  			tmpcmd[i] = '\0';
 -			ret = asprintf(&command, "cat %s | %s%s%s",
