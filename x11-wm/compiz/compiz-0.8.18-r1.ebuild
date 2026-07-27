@@ -72,6 +72,7 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}/stdlib-fix.patch"
 	eapply "${FILESDIR}/nvidia_tearing.patch"
+	eapply "${FILESDIR}/xml-readio-nullbyte.patch"
 	eautoreconf
 }
 
