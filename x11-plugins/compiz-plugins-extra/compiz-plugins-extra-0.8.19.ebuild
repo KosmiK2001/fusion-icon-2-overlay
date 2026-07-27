@@ -8,7 +8,7 @@ inherit autotools gnome2-utils
 MY_PV="0.8.19"
 DESCRIPTION="Compiz Window Manager: Extra Plugins (with performance fixes)"
 HOMEPAGE="https://github.com/KosmiK2001/compiz-plugins-extra"
-SRC_URI="https://github.com/KosmiK2001/${PN}/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/KosmiK2001/${PN}/releases/download/v${MY_PV}/${PN}-${MY_PV}.tar.xz -> ${P}.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0"
