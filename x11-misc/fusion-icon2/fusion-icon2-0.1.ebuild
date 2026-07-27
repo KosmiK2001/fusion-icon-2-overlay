@@ -5,7 +5,7 @@ EAPI=8
 
 DESCRIPTION="Fusion Icon 2 - system tray for switching Compiz window managers"
 HOMEPAGE="https://github.com/KosmiK2001/fusion-icon-2"
-SRC_URI="https://github.com/KosmiK2001/fusion-icon-2/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/KosmiK2001/fusion-icon-2/releases/download/${PV}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
