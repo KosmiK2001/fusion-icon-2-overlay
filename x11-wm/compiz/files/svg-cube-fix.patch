@@ -1,0 +1,23 @@
+--- a/plugins/svg.c
++++ b/plugins/svg.c
+@@ -31,8 +31,8 @@
+ #ifndef RSVG_CAIRO_H
+ #include <librsvg/rsvg-cairo.h>
+ #endif
+-#ifndef LIBRSVG_FEATURES_H
+-#include <librsvg/librsvg-features.h>
++#ifndef RSVG_FEATURES_H
++#include <librsvg/rsvg-features.h>
+ #endif
+ 
+ #include <X11/Xatom.h>
+--- a/plugins/cube.c
++++ b/plugins/cube.c
+@@ -31,6 +31,7 @@
+ #include <X11/Xproto.h>
+ 
+ #include <compiz-cube.h>
++#include <stdlib.h>
+ 
+ static CompMetadata cubeMetadata;
+ 
