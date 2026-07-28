@@ -1,0 +1,75 @@
+# Copyright 2024 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+inherit autotools gnome2-utils
+
+DESCRIPTION="Emerald Window Decorator"
+HOMEPAGE="https://github.com/KosmiK2001/emerald"
+SRC_URI="https://github.com/KosmiK2001/${PN}/releases/download/0.8.18/${PN}-0.8.18.tar.xz -> ${P}.tar.xz"
+
+LICENSE="GPL-2+"
+SLOT="0"
+KEYWORDS="~amd64 ~x86"
+IUSE="gtk3"
+
+PDEPEND="
+	>=x11-themes/emerald-themes-0.8.12
+	<x11-themes/emerald-themes-0.9
+"
+
+RDEPEND="
+	>=x11-wm/compiz-0.8.12
+	<=x11-wm/compiz-0.9
+	gtk3? (
+		x11-libs/gtk+:3
+		x11-libs/libwnck:3
+	)
+	!gtk3? (
+		>=x11-libs/gtk+-2.22.0:2
+		>=x11-libs/libwnck-2.22:1
+	)
+"
+
+DEPEND="${RDEPEND}
+	>=dev-util/intltool-0.35
+	>=sys-devel/gettext-0.17
+	virtual/pkgconfig
+"
+
+S="${WORKDIR}/${PN}-0.8.18"
+
+src_prepare() {
+	eapply "${FILESDIR}/stdlib-fix.patch"
+	sed -i -e "/PKG_CONFIG_PATH/s:/lib:/$(get_libdir):" configure.ac
+	sed -i -e "s:/lib:/$(get_libdir):" \
+		-e "s/+=4/+=$(get_libdir | wc -c)/" libengine/themer.c
+	default
+	eautoreconf
+}
+
+src_configure() {
+	econf \
+		--disable-static \
+		--enable-fast-install \
+		--disable-mime-update \
+		--with-gtk=$(usex gtk3 3.0 2.0)
+}
+
+src_install() {
+	default
+	find "${D}" -name '*.la' -delete || die
+}
+
+pkg_postinst() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
+}

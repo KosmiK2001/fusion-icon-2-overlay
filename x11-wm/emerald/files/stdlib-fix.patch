@@ -1,0 +1,49 @@
+--- a/libengine/emerald.c	2026-07-28 16:04:56.720252051 +0300
++++ b/libengine/emerald.c	2026-07-28 16:05:02.702865552 +0300
+@@ -19,6 +19,7 @@
+ 
+ /* emerald stuff */
+ #include <engine.h>
++#include <stdlib.h>
+ 
+ void copy_from_defaults_if_needed()
+ {
+--- a/libengine/themer.c	2026-07-28 16:04:56.720279406 +0300
++++ b/libengine/themer.c	2026-07-28 16:05:02.698209877 +0300
+@@ -19,6 +19,7 @@
+ 
+ /* themer stuff */
+ #include <engine.h>
++#include <stdlib.h>
+ #include <signal.h>
+ 
+ #if !GTK_CHECK_VERSION(3, 0, 0)
+--- a/src/engine_loader.c	2026-07-28 16:04:56.722599098 +0300
++++ b/src/engine_loader.c	2026-07-28 16:05:02.688150631 +0300
+@@ -19,6 +19,7 @@
+ 
+ /* engine loader */
+ #include <emerald.h>
++#include <stdlib.h>
+ #include <engine.h>
+ 
+ #define LOCAL_ENGINE_DIR g_get_home_dir(),".emerald/engines"
+--- a/src/main.c	2026-07-28 16:04:56.722384181 +0300
++++ b/src/main.c	2026-07-28 16:05:02.693209913 +0300
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <gdk/gdk.h>
++#include <stdlib.h>
+ 
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+--- a/themer/main.c	2026-07-28 16:04:56.719021606 +0300
++++ b/themer/main.c	2026-07-28 16:05:02.707302505 +0300
+@@ -1,5 +1,6 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
++#include <stdlib.h>
+ #endif
+ #define NEED_BUTTON_FILE_NAMES
+ #define NEED_BUTTON_NAMES
