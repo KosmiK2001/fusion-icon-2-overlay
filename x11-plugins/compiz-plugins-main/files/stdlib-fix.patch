@@ -1,5 +1,6 @@
---- compiz-plugins-main-0.8.18.orig/src/animation/animation.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/animation.c	2026-07-28 14:49:52.635328975 +0300
+diff --no-dereference -ruN a/src/animation/animation.c b/src/animation/animation.c
+--- a/src/animation/animation.c	2026-07-28 15:15:18.738296889 +0300
++++ b/src/animation/animation.c	2026-07-28 15:15:18.808530008 +0300
 @@ -81,6 +81,7 @@
   */
  
@@ -8,8 +9,9 @@
  #include "animation-internal.h"
  
  
---- compiz-plugins-main-0.8.18.orig/src/animation/curvedfold.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/curvedfold.c	2026-07-28 14:49:52.631511289 +0300
+diff --no-dereference -ruN a/src/animation/curvedfold.c b/src/animation/curvedfold.c
+--- a/src/animation/curvedfold.c	2026-07-28 15:15:18.738391298 +0300
++++ b/src/animation/curvedfold.c	2026-07-28 15:15:18.814502247 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -18,8 +20,9 @@
  
  // =====================  Effect: Curved Fold  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/dodge.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/dodge.c	2026-07-28 14:49:52.615616737 +0300
+diff --no-dereference -ruN a/src/animation/dodge.c b/src/animation/dodge.c
+--- a/src/animation/dodge.c	2026-07-28 15:15:18.738501278 +0300
++++ b/src/animation/dodge.c	2026-07-28 15:15:18.818639828 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -28,8 +31,9 @@
  
  // =====================  Effect: Dodge  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/dream.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/dream.c	2026-07-28 14:49:52.627699367 +0300
+diff --no-dereference -ruN a/src/animation/dream.c b/src/animation/dream.c
+--- a/src/animation/dream.c	2026-07-28 15:15:18.738424634 +0300
++++ b/src/animation/dream.c	2026-07-28 15:15:18.822808557 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -38,8 +42,9 @@
  
  Bool
  fxDreamAnimInit (CompWindow * w)
---- compiz-plugins-main-0.8.18.orig/src/animation/fade.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/fade.c	2026-07-28 14:49:52.649867732 +0300
+diff --no-dereference -ruN a/src/animation/fade.c b/src/animation/fade.c
+--- a/src/animation/fade.c	2026-07-28 15:15:18.738155801 +0300
++++ b/src/animation/fade.c	2026-07-28 15:15:18.827523925 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -48,8 +53,9 @@
  
  // =====================  Effect: Fade  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/focusfade.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/focusfade.c	2026-07-28 14:49:52.653539286 +0300
+diff --no-dereference -ruN a/src/animation/focusfade.c b/src/animation/focusfade.c
+--- a/src/animation/focusfade.c	2026-07-28 15:15:18.738136970 +0300
++++ b/src/animation/focusfade.c	2026-07-28 15:15:18.831862908 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -58,8 +64,9 @@
  
  // =====================  Effect: Focus Fade  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/glide.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/glide.c	2026-07-28 14:49:52.656991067 +0300
+diff --no-dereference -ruN a/src/animation/glide.c b/src/animation/glide.c
+--- a/src/animation/glide.c	2026-07-28 15:15:18.738114818 +0300
++++ b/src/animation/glide.c	2026-07-28 15:15:18.835696592 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -68,8 +75,9 @@
  
  // =====================  Effect: Glide  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/horizontalfold.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/horizontalfold.c	2026-07-28 14:49:52.619879389 +0300
+diff --no-dereference -ruN a/src/animation/horizontalfold.c b/src/animation/horizontalfold.c
+--- a/src/animation/horizontalfold.c	2026-07-28 15:15:18.738469125 +0300
++++ b/src/animation/horizontalfold.c	2026-07-28 15:15:18.839491568 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -78,8 +86,9 @@
  
  // =====================  Effect: Horizontal Folds  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/magiclamp.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/magiclamp.c	2026-07-28 14:49:52.624157452 +0300
+diff --no-dereference -ruN a/src/animation/magiclamp.c b/src/animation/magiclamp.c
+--- a/src/animation/magiclamp.c	2026-07-28 15:15:18.738444768 +0300
++++ b/src/animation/magiclamp.c	2026-07-28 15:15:18.843535096 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -88,8 +97,9 @@
  
  void
  fxMagicLampInitGrid (CompWindow *w,
---- compiz-plugins-main-0.8.18.orig/src/animation/options.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/options.c	2026-07-28 14:49:52.643175288 +0300
+diff --no-dereference -ruN a/src/animation/options.c b/src/animation/options.c
+--- a/src/animation/options.c	2026-07-28 15:15:18.738193704 +0300
++++ b/src/animation/options.c	2026-07-28 15:15:18.847346125 +0300
 @@ -26,6 +26,7 @@
   */
  
@@ -98,8 +108,9 @@
  
  extern ExtensionPluginInfo animExtensionPluginInfo;
  extern AnimBaseFunctions animBaseFunctions;
---- compiz-plugins-main-0.8.18.orig/src/animation/rollup.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/rollup.c	2026-07-28 14:49:52.645460717 +0300
+diff --no-dereference -ruN a/src/animation/rollup.c b/src/animation/rollup.c
+--- a/src/animation/rollup.c	2026-07-28 15:15:18.738173982 +0300
++++ b/src/animation/rollup.c	2026-07-28 15:15:18.851125338 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -108,8 +119,9 @@
  
  // =====================  Effect: Roll Up  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/wave.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/wave.c	2026-07-28 14:49:52.611571102 +0300
+diff --no-dereference -ruN a/src/animation/wave.c b/src/animation/wave.c
+--- a/src/animation/wave.c	2026-07-28 15:15:18.738527077 +0300
++++ b/src/animation/wave.c	2026-07-28 15:15:18.855120754 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -118,8 +130,9 @@
  
  // =====================  Effect: Wave  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/zoomside.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/zoomside.c	2026-07-28 14:49:52.638460762 +0300
+diff --no-dereference -ruN a/src/animation/zoomside.c b/src/animation/zoomside.c
+--- a/src/animation/zoomside.c	2026-07-28 15:15:18.738236296 +0300
++++ b/src/animation/zoomside.c	2026-07-28 15:15:18.858814991 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -128,8 +141,9 @@
  
  // =====================  Effect: Zoom and Sidekick  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/mag/mag.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/mag/mag.c	2026-07-28 14:49:52.675283004 +0300
+diff --no-dereference -ruN a/src/mag/mag.c b/src/mag/mag.c
+--- a/src/mag/mag.c	2026-07-28 15:15:18.736543023 +0300
++++ b/src/mag/mag.c	2026-07-28 15:15:18.862830425 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -138,8 +152,9 @@
  #include <string.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/mousepoll/mousepoll.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/mousepoll/mousepoll.c	2026-07-28 14:49:52.668047911 +0300
+diff --no-dereference -ruN a/src/mousepoll/mousepoll.c b/src/mousepoll/mousepoll.c
+--- a/src/mousepoll/mousepoll.c	2026-07-28 15:15:18.737002736 +0300
++++ b/src/mousepoll/mousepoll.c	2026-07-28 15:15:18.867250806 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -148,8 +163,9 @@
  
  #include "compiz-mousepoll.h"
  
---- compiz-plugins-main-0.8.18.orig/src/opacify/opacify.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/opacify/opacify.c	2026-07-28 14:49:52.682864335 +0300
+diff --no-dereference -ruN a/src/opacify/opacify.c b/src/opacify/opacify.c
+--- a/src/opacify/opacify.c	2026-07-28 15:15:18.735797543 +0300
++++ b/src/opacify/opacify.c	2026-07-28 15:15:18.871026902 +0300
 @@ -22,6 +22,7 @@
   */
  
@@ -158,8 +174,9 @@
  #include "opacify_options.h"
  
  #define GET_OPACIFY_DISPLAY(d)                            \
---- compiz-plugins-main-0.8.18.orig/src/scaleaddon/scaleaddon.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/scaleaddon/scaleaddon.c	2026-07-28 14:49:52.679098784 +0300
+diff --no-dereference -ruN a/src/scaleaddon/scaleaddon.c b/src/scaleaddon/scaleaddon.c
+--- a/src/scaleaddon/scaleaddon.c	2026-07-28 15:15:18.736006437 +0300
++++ b/src/scaleaddon/scaleaddon.c	2026-07-28 15:15:18.874686476 +0300
 @@ -25,6 +25,7 @@
   */
  
@@ -168,8 +185,9 @@
  #include <string.h>
  #include <X11/Xatom.h>
  
---- compiz-plugins-main-0.8.18.orig/src/session/session.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/session/session.c	2026-07-28 14:49:52.664518612 +0300
+diff --no-dereference -ruN a/src/session/session.c b/src/session/session.c
+--- a/src/session/session.c	2026-07-28 15:15:18.737698139 +0300
++++ b/src/session/session.c	2026-07-28 15:15:18.878602086 +0300
 @@ -25,6 +25,7 @@
  
  #define _GNU_SOURCE
@@ -178,8 +196,9 @@
  #include <X11/SM/SM.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/vpswitch/vpswitch.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/vpswitch/vpswitch.c	2026-07-28 14:49:52.686509753 +0300
+diff --no-dereference -ruN a/src/vpswitch/vpswitch.c b/src/vpswitch/vpswitch.c
+--- a/src/vpswitch/vpswitch.c	2026-07-28 15:15:18.735274800 +0300
++++ b/src/vpswitch/vpswitch.c	2026-07-28 15:15:18.882827942 +0300
 @@ -27,6 +27,7 @@
   */
  
@@ -188,8 +207,9 @@
  #include <string.h>
  #include <X11/keysymdef.h>
  #include "vpswitch_options.h"
---- compiz-plugins-main-0.8.18.orig/src/winrules/winrules.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/winrules/winrules.c	2026-07-28 14:49:52.660495456 +0300
+diff --no-dereference -ruN a/src/winrules/winrules.c b/src/winrules/winrules.c
+--- a/src/winrules/winrules.c	2026-07-28 15:15:18.737967721 +0300
++++ b/src/winrules/winrules.c	2026-07-28 15:15:18.886490688 +0300
 @@ -20,6 +20,7 @@
   */
  
@@ -198,8 +218,9 @@
  
  #include <X11/Xatom.h>
  
---- compiz-plugins-main-0.8.18.orig/src/workarounds/workarounds.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/workarounds/workarounds.c	2026-07-28 14:49:52.671651126 +0300
+diff --no-dereference -ruN a/src/workarounds/workarounds.c b/src/workarounds/workarounds.c
+--- a/src/workarounds/workarounds.c	2026-07-28 15:15:18.736958400 +0300
++++ b/src/workarounds/workarounds.c	2026-07-28 15:15:18.890275717 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -208,8 +229,8 @@
  #include <limits.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/animation/wave.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/wave.c	2026-07-28 14:49:52.611571102 +0300
+--- a/src/animation/wave.c	2026-07-28 15:15:18.738527077 +0300
++++ b/src/animation/wave.c	2026-07-28 15:15:18.855120754 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -218,8 +239,8 @@
  
  // =====================  Effect: Wave  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/dodge.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/dodge.c	2026-07-28 14:49:52.615616737 +0300
+--- a/src/animation/dodge.c	2026-07-28 15:15:18.738501278 +0300
++++ b/src/animation/dodge.c	2026-07-28 15:15:18.818639828 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -228,8 +249,8 @@
  
  // =====================  Effect: Dodge  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/horizontalfold.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/horizontalfold.c	2026-07-28 14:49:52.619879389 +0300
+--- a/src/animation/horizontalfold.c	2026-07-28 15:15:18.738469125 +0300
++++ b/src/animation/horizontalfold.c	2026-07-28 15:15:18.839491568 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -238,8 +259,8 @@
  
  // =====================  Effect: Horizontal Folds  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/magiclamp.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/magiclamp.c	2026-07-28 14:49:52.624157452 +0300
+--- a/src/animation/magiclamp.c	2026-07-28 15:15:18.738444768 +0300
++++ b/src/animation/magiclamp.c	2026-07-28 15:15:18.843535096 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -248,8 +269,8 @@
  
  void
  fxMagicLampInitGrid (CompWindow *w,
---- compiz-plugins-main-0.8.18.orig/src/animation/dream.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/dream.c	2026-07-28 14:49:52.627699367 +0300
+--- a/src/animation/dream.c	2026-07-28 15:15:18.738424634 +0300
++++ b/src/animation/dream.c	2026-07-28 15:15:18.822808557 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -258,8 +279,8 @@
  
  Bool
  fxDreamAnimInit (CompWindow * w)
---- compiz-plugins-main-0.8.18.orig/src/animation/curvedfold.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/curvedfold.c	2026-07-28 14:49:52.631511289 +0300
+--- a/src/animation/curvedfold.c	2026-07-28 15:15:18.738391298 +0300
++++ b/src/animation/curvedfold.c	2026-07-28 15:15:18.814502247 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -268,8 +289,8 @@
  
  // =====================  Effect: Curved Fold  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/animation.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/animation.c	2026-07-28 14:49:52.635328975 +0300
+--- a/src/animation/animation.c	2026-07-28 15:15:18.738296889 +0300
++++ b/src/animation/animation.c	2026-07-28 15:15:18.808530008 +0300
 @@ -81,6 +81,7 @@
   */
  
@@ -278,8 +299,8 @@
  #include "animation-internal.h"
  
  
---- compiz-plugins-main-0.8.18.orig/src/animation/zoomside.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/zoomside.c	2026-07-28 14:49:52.638460762 +0300
+--- a/src/animation/zoomside.c	2026-07-28 15:15:18.738236296 +0300
++++ b/src/animation/zoomside.c	2026-07-28 15:15:18.858814991 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -288,8 +309,8 @@
  
  // =====================  Effect: Zoom and Sidekick  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/options.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/options.c	2026-07-28 14:49:52.643175288 +0300
+--- a/src/animation/options.c	2026-07-28 15:15:18.738193704 +0300
++++ b/src/animation/options.c	2026-07-28 15:15:18.847346125 +0300
 @@ -26,6 +26,7 @@
   */
  
@@ -298,8 +319,8 @@
  
  extern ExtensionPluginInfo animExtensionPluginInfo;
  extern AnimBaseFunctions animBaseFunctions;
---- compiz-plugins-main-0.8.18.orig/src/animation/rollup.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/rollup.c	2026-07-28 14:49:52.645460717 +0300
+--- a/src/animation/rollup.c	2026-07-28 15:15:18.738173982 +0300
++++ b/src/animation/rollup.c	2026-07-28 15:15:18.851125338 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -308,8 +329,8 @@
  
  // =====================  Effect: Roll Up  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/fade.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/fade.c	2026-07-28 14:49:52.649867732 +0300
+--- a/src/animation/fade.c	2026-07-28 15:15:18.738155801 +0300
++++ b/src/animation/fade.c	2026-07-28 15:15:18.827523925 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -318,8 +339,8 @@
  
  // =====================  Effect: Fade  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/focusfade.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/focusfade.c	2026-07-28 14:49:52.653539286 +0300
+--- a/src/animation/focusfade.c	2026-07-28 15:15:18.738136970 +0300
++++ b/src/animation/focusfade.c	2026-07-28 15:15:18.831862908 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -328,8 +349,8 @@
  
  // =====================  Effect: Focus Fade  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/animation/glide.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/animation/glide.c	2026-07-28 14:49:52.656991067 +0300
+--- a/src/animation/glide.c	2026-07-28 15:15:18.738114818 +0300
++++ b/src/animation/glide.c	2026-07-28 15:15:18.835696592 +0300
 @@ -35,6 +35,7 @@
   */
  
@@ -338,8 +359,8 @@
  
  // =====================  Effect: Glide  =========================
  
---- compiz-plugins-main-0.8.18.orig/src/winrules/winrules.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/winrules/winrules.c	2026-07-28 14:49:52.660495456 +0300
+--- a/src/winrules/winrules.c	2026-07-28 15:15:18.737967721 +0300
++++ b/src/winrules/winrules.c	2026-07-28 15:15:18.886490688 +0300
 @@ -20,6 +20,7 @@
   */
  
@@ -348,8 +369,8 @@
  
  #include <X11/Xatom.h>
  
---- compiz-plugins-main-0.8.18.orig/src/session/session.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/session/session.c	2026-07-28 14:49:52.664518612 +0300
+--- a/src/session/session.c	2026-07-28 15:15:18.737698139 +0300
++++ b/src/session/session.c	2026-07-28 15:15:18.878602086 +0300
 @@ -25,6 +25,7 @@
  
  #define _GNU_SOURCE
@@ -358,8 +379,8 @@
  #include <X11/SM/SM.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/mousepoll/mousepoll.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/mousepoll/mousepoll.c	2026-07-28 14:49:52.668047911 +0300
+--- a/src/mousepoll/mousepoll.c	2026-07-28 15:15:18.737002736 +0300
++++ b/src/mousepoll/mousepoll.c	2026-07-28 15:15:18.867250806 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -368,8 +389,8 @@
  
  #include "compiz-mousepoll.h"
  
---- compiz-plugins-main-0.8.18.orig/src/workarounds/workarounds.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/workarounds/workarounds.c	2026-07-28 14:49:52.671651126 +0300
+--- a/src/workarounds/workarounds.c	2026-07-28 15:15:18.736958400 +0300
++++ b/src/workarounds/workarounds.c	2026-07-28 15:15:18.890275717 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -378,8 +399,8 @@
  #include <limits.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/mag/mag.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/mag/mag.c	2026-07-28 14:49:52.675283004 +0300
+--- a/src/mag/mag.c	2026-07-28 15:15:18.736543023 +0300
++++ b/src/mag/mag.c	2026-07-28 15:15:18.862830425 +0300
 @@ -21,6 +21,7 @@
   */
  
@@ -388,8 +409,8 @@
  #include <string.h>
  
  #include <compiz-core.h>
---- compiz-plugins-main-0.8.18.orig/src/scaleaddon/scaleaddon.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/scaleaddon/scaleaddon.c	2026-07-28 14:49:52.679098784 +0300
+--- a/src/scaleaddon/scaleaddon.c	2026-07-28 15:15:18.736006437 +0300
++++ b/src/scaleaddon/scaleaddon.c	2026-07-28 15:15:18.874686476 +0300
 @@ -25,6 +25,7 @@
   */
  
@@ -398,8 +419,8 @@
  #include <string.h>
  #include <X11/Xatom.h>
  
---- compiz-plugins-main-0.8.18.orig/src/opacify/opacify.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/opacify/opacify.c	2026-07-28 14:49:52.682864335 +0300
+--- a/src/opacify/opacify.c	2026-07-28 15:15:18.735797543 +0300
++++ b/src/opacify/opacify.c	2026-07-28 15:15:18.871026902 +0300
 @@ -22,6 +22,7 @@
   */
  
@@ -408,8 +429,8 @@
  #include "opacify_options.h"
  
  #define GET_OPACIFY_DISPLAY(d)                            \
---- compiz-plugins-main-0.8.18.orig/src/vpswitch/vpswitch.c	2020-02-11 14:23:28.000000000 +0300
-+++ compiz-plugins-main-0.8.18/src/vpswitch/vpswitch.c	2026-07-28 14:49:52.686509753 +0300
+--- a/src/vpswitch/vpswitch.c	2026-07-28 15:15:18.735274800 +0300
++++ b/src/vpswitch/vpswitch.c	2026-07-28 15:15:18.882827942 +0300
 @@ -27,6 +27,7 @@
   */
  
