@@ -38,8 +38,14 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	default
+
+	# Fix implicit malloc/calloc/free declarations for GCC 14+
+	local f
+	for f in $(grep -rl "malloc\|calloc\|free\|realloc" src/ --include="*.c" --include="*.h"); do
+		grep -q "stdlib.h" "${f}" || sed -i '1i #include <stdlib.h>' "${f}"
+	done
+
 	eautoreconf
-	eapply "${FILESDIR}"/c_p_exp-stdlib.patch
 }
 
 src_configure() {
