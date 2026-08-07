@@ -6,8 +6,8 @@ EAPI=8
 inherit autotools gnome2-utils
 
 DESCRIPTION="Compiz Window Manager: Experimental Plugins"
-HOMEPAGE="https://gitlab.com/compiz"
-SRC_URI="http://northfield.ws/projects/compiz/releases/${PV}/${P}.tar.xz"
+HOMEPAGE="https://github.com/KosmiK2001/compiz-plugins-experimental"
+SRC_URI="https://github.com/KosmiK2001/${PN}/releases/download/${PV}/${P}.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0"
