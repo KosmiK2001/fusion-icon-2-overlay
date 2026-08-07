@@ -134,9 +134,8 @@ src_prepare() {
 #define NV_HAVE_PROC_OPS\
 #endif' kernel/nv-linux.h || die "Failed to inject conftest overrides"
 
-	# 3. Fix stray '+' from patch 0012 (git merge artifact)
-	sed -i 's/^+#define /#define /g' kernel/nv-linux.h
-	sed -i 's/^+#endif/#endif/g' kernel/nv-linux.h
+	# 3. Fix ALL stray '+' from patch 0012 (git merge artifact)
+	sed -i 's/^+//' kernel/nv-linux.h
 
 	# 4. Fix pm_message_t typedef: wrap in #ifndef
 	sed -i 's/^typedef u32 pm_message_t;/#ifndef NV_PM_MESSAGE_T_PRESENT\ntypedef u32 pm_message_t;\n#endif/' kernel/nv-linux.h
@@ -151,14 +150,24 @@ src_prepare() {
 	# 7. Fix NV_DEFINE_PROCFS_SINGLE_FILE: remove blank line breaking \ continuation
 	sed -i '/^    }                                                                         \\$/{n;/^$/d}' kernel/nv-linux.h
 
-	# 8. Fix get_user_pages: 8-arg → 4-arg API
+	# 8. Fix get_user_pages: modern 4-arg API
+	#    After patches 0041-0044, the code may have various patterns.
+	#    Replace ALL get_user_pages calls with >4 args.
 	sed -i 's/get_user_pages(current, current->mm, start, nr_pages, flags,/get_user_pages(start, nr_pages, flags,/' kernel/nv-linux.h
 	sed -i 's/get_user_pages(current, current->mm, start, nr_pages, write,/get_user_pages(start, nr_pages, flags,/' kernel/nv-linux.h
-	sed -i 's/get_user_pages(start, nr_pages, flags, pages, vmas)/get_user_pages(start, nr_pages, flags, pages)/' kernel/nv-linux.h
+	sed -i 's/get_user_pages(start, nr_pages, flags, pages, vmas)/get_user_pages(start, nr_pages, flags, pages)/g' kernel/nv-linux.h
+	# Multi-line: "flags,\n                      force, pages, vmas)" → "flags, pages)"
+	sed -i '/get_user_pages(start, nr_pages, flags,$/{N;s/get_user_pages(start, nr_pages, flags,\n[ ]*force, pages, vmas)/get_user_pages(start, nr_pages, flags, pages)/}' kernel/nv-linux.h
+	# catch any remaining get_user_pages with >4 args
+	sed -i 's/get_user_pages(start, nr_pages, flags, force, pages, vmas)/get_user_pages(start, nr_pages, flags, pages)/g' kernel/nv-linux.h
 
-	# 9. Fix get_user_pages_remote: remove NULL tsk arg
+	# 9. Fix get_user_pages_remote: the fallback in NV_GET_USER_PAGES_REMOTE
+	#    calls get_user_pages(NULL, mm, ...) which is wrong for modern API.
+	#    Replace with get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)
+	sed -i '/get_user_pages(NULL, mm,/{N;s/get_user_pages(NULL, mm, start, nr_pages, write, force, pages, vmas)/get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)/}' kernel/nv-linux.h
+	sed -i 's/get_user_pages(NULL, mm, start, nr_pages, write, force, pages, vmas)/get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)/g' kernel/nv-linux.h
 	sed -i 's/get_user_pages_remote(NULL, mm,/get_user_pages_remote(mm,/' kernel/nv-linux.h
-	sed -i 's/get_user_pages_remote(mm, start, nr_pages, flags, pages, vmas, NULL)/get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)/' kernel/nv-linux.h
+	sed -i 's/get_user_pages_remote(mm, start, nr_pages, flags, pages, vmas, NULL)/get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)/g' kernel/nv-linux.h
 
 	# 10. Fix vm_flags: use helpers
 	sed -i '/^static inline void nv_vm_flags_set/,/^}/{s/vma->vm_flags |= flags;/vm_flags_set(vma, flags);/}' kernel/nv-linux.h
@@ -167,11 +176,18 @@ src_prepare() {
 	# 11. Fix nv-acpi.c: nv_acpi_integer_t → u64
 	sed -i 's/nv_acpi_integer_t/u64/g' kernel/nv-acpi.c
 
-	# 12. Fix request_irq: ISR signature (no pt_regs)
+	# 12. Fix request_irq: ISR signature (no pt_regs since ~5.18)
 	sed -i 's/static irqreturn_t   nvidia_isr            (int, void \*, struct pt_regs \*);/static irqreturn_t   nvidia_isr            (int, void *);/' kernel/nv.c
 	sed -i 's/irqreturn_t nv_gvi_kern_isr             (int, void \*, struct pt_regs \*);/irqreturn_t nv_gvi_kern_isr             (int, void *);/' kernel/nv-proto.h
-	# Fix the function definition too
-	sed -i '/^nvidia_isr($/,/^}/{s/struct pt_regs \*regs/unused_pt_regs/;s/, *unused_pt_regs//}' kernel/nv.c
+	sed -i '/^nvidia_isr($/{N;N;N;s/(int irq,\n    void *arg,\n    struct pt_regs *regs)/(int irq,\n    void *arg)/}' kernel/nv.c
+
+	# 13. Stub out acpi_bus_get_device (removed in 6.12)
+	sed -i 's/retVal = acpi_bus_get_device(nvif_parent_gpu_handle, &device);/retVal = -ENODEV;  \/\/ acpi_bus_get_device removed in 6.12/' kernel/nv-acpi.c
+
+	# Debug: dump state after all fixes
+	ebegin "Dumping post-fix nv-linux.h state"
+	grep -n "get_user_pages\|NV_GET_USER_PAGES\|NV_FILE_INODE\|f_dentry\|f_inode\|^+$\|pm_message_t\|pci_save_state" kernel/nv-linux.h > "${T}/debug-nv-linux.txt" 2>&1
+	eend 0
 
 	eapply_user
 }
