@@ -271,6 +271,9 @@ struct timeval {\
 }
 
 src_compile() {
+	# Create stub .cmd file for precompiled nv-kernel.o
+	echo "cmd_${S}/kernel/nv-kernel.o := true" > kernel/.nv-kernel.o.cmd
+
 	local modlist=( nvidia=video:kernel )
 	local modargs=(
 		IGNORE_CC_MISMATCH=yes NV_VERBOSE=1
