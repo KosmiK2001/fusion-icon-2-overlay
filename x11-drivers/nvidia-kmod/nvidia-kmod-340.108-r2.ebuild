@@ -210,6 +210,15 @@ src_prepare() {
 	# 14. Fix ACPI_VIDEO_HID: char* → acpi_device_id array
 	sed -i 's/\.ids = ACPI_VIDEO_HID,/.ids = (const struct acpi_device_id []){ {ACPI_VIDEO_HID, 0}, {""} },/' kernel/nv-acpi.c
 
+	# 15. Fix nv-procfs.c: file_operations → proc_ops (patch 0012 failed)
+	sed -i 's/struct file_operations nv_procfs_/struct proc_ops nv_procfs_/g' kernel/nv-procfs.c
+	sed -i '/\.owner.*THIS_MODULE,/d' kernel/nv-procfs.c
+	sed -i 's/\.open    = /.proc_open    = /g' kernel/nv-procfs.c
+	sed -i 's/\.read    = /.proc_read    = /g' kernel/nv-procfs.c
+	sed -i 's/\.write   = /.proc_write   = /g' kernel/nv-procfs.c
+	sed -i 's/\.llseek  = /.proc_lseek   = /g' kernel/nv-procfs.c
+	sed -i 's/\.release = /.proc_release = /g' kernel/nv-procfs.c
+
 	# Debug: dump state after all fixes
 	ebegin "Dumping post-fix nv-linux.h state"
 	grep -n "get_user_pages\|NV_GET_USER_PAGES\|NV_FILE_INODE\|f_dentry\|f_inode\|^+$\|pm_message_t\|pci_save_state" kernel/nv-linux.h > "${T}/debug-nv-linux.txt" 2>&1
