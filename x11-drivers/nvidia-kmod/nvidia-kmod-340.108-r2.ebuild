@@ -248,6 +248,16 @@ struct timeval {\
 	# 15f. do_gettimeofday: removed in 6.12, use ktime path
 	sed -i 's/#ifdef NV_DO_GETTIMEOFDAY_PRESENT/#ifdef NV_DO_GETTIMEOFDAY_REMOVED/' kernel/nv-time.h
 
+	# 16. AUR fixes: EXTRA_CFLAGS → ccflags-y (deprecated in modern kernels)
+	sed -i 's/EXTRA_CFLAGS +=/ccflags-y +=/g' kernel/nvidia-modules-common.mk kernel/Makefile 2>/dev/null
+	sed -i 's/-std=gnu11/-std=gnu17/g' kernel/nvidia-modules-common.mk kernel/Makefile 2>/dev/null
+
+	# 17. AUR fix: disable objtool for nvidia.o (prevents crashes)
+	sed -i '/$(KERNEL_GLUE_NAME):/i nvidia.o: override objtool-enabled =' kernel/nvidia-modules-common.mk 2>/dev/null
+
+	# 18. AUR fix: timer_delete_sync for modern kernels
+	sed -i 's/del_timer_sync/timer_delete_sync/g' kernel/nv.c 2>/dev/null
+
 	# 15d. Fix ioremap_nocache: removed in 6.12, use ioremap
 	sed -i 's/ioremap_nocache/ioremap/' kernel/nv-linux.h
 
