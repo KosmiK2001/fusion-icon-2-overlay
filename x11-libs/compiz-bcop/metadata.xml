@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<upstream>
+		<remote-id type="github">KosmiK2001/compiz-bcop</remote-id>
+	</upstream>
+	<longdescription lang="en">BCOP is a code generator that provides an easy way to handle plugin options by generating parts of the plugin code directly from the xml metadata file.</longdescription>
+</pkgmetadata>
