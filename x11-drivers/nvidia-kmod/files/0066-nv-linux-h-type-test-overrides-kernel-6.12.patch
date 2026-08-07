@@ -1,6 +1,6 @@
 --- a/kernel/nv-linux.h	2026-08-07 16:32:54.334860872 +0300
-+++ b/kernel/nv-linux.h	2026-08-07 17:22:57.703028921 +0300
-@@ -12,8 +12,143 @@
++++ b/kernel/nv-linux.h	2026-08-07 17:28:06.623971203 +0300
+@@ -12,8 +12,147 @@
  #define _NV_LINUX_H_
  
  #include "nv.h"
@@ -27,7 +27,10 @@
 +#endif
  #include "conftest.h"
  
-+/* Override conftest results for kernels >= 6.12 where conftest detection fails */
++/* Override conftest results for kernels >= 6.12 where conftest detection fails.
++ * These are applied AFTER conftest.h so they always win.
++ * Use #undef + #define (not #ifndef) to forcefully override conftest values.
++ */
 +#include <linux/version.h>
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
 +
@@ -44,14 +47,12 @@
 +#define NV_VMAP_ARGUMENT_COUNT 2
 +
 +/* kmem_cache_create takes 5 args since 3.17 */
-+#ifndef NV_KMEM_CACHE_CREATE_PRESENT
++#undef NV_KMEM_CACHE_CREATE_PRESENT
 +#define NV_KMEM_CACHE_CREATE_PRESENT
-+#endif
 +#undef NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT
 +#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
-+#ifndef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
++#undef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
 +#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
-+#endif
 +
 +/* smp_call_function takes 3 args since 5.3 */
 +#undef NV_SMP_CALL_FUNCTION_PRESENT
@@ -65,7 +66,7 @@
 +#undef NV_ON_EACH_CPU_ARGUMENT_COUNT
 +#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
 +
-+/* acpi_walk_namespace takes 7 args since 6.x (added flags param) */
++/* acpi_walk_namespace takes 7 args (added flags param) */
 +#undef NV_ACPI_WALK_NAMESPACE_PRESENT
 +#define NV_ACPI_WALK_NAMESPACE_PRESENT
 +#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
@@ -78,37 +79,40 @@
 +#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2
 +
 +/* proc_ops replaces file_operations for proc since 5.6 */
-+#ifndef NV_PROC_OPS_PRESENT
++#undef NV_PROC_OPS_PRESENT
 +#define NV_PROC_OPS_PRESENT
-+#endif
-+#ifndef NV_HAVE_PROC_OPS
++#undef NV_HAVE_PROC_OPS
 +#define NV_HAVE_PROC_OPS
-+#endif
-+
-+/* kmem_cache_create: _PRESENT must be defined for the macro chain to work */
-+#ifndef NV_KMEM_CACHE_CREATE_PRESENT
-+#define NV_KMEM_CACHE_CREATE_PRESENT
-+#endif
-+
-+/* acpi_walk_namespace takes 7 args since 6.x (added flags param) */
-+#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
-+#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
 +
 +/* pci_save_state takes 1 arg since 2.6.29 */
-+#ifndef NV_PCI_SAVE_STATE_ARGUMENT_COUNT
++#undef NV_PCI_SAVE_STATE_ARGUMENT_COUNT
 +#define NV_PCI_SAVE_STATE_ARGUMENT_COUNT 1
-+#endif
 +
 +/* get_user_pages takes 4 args (start, nr_pages, gup_flags, pages) since 5.8 */
-+#ifdef NV_GET_USER_PAGES_HAS_TASK_STRUCT
 +#undef NV_GET_USER_PAGES_HAS_TASK_STRUCT
-+#endif
-+#ifdef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS
 +#undef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS
-+#endif
-+#ifndef NV_GET_USER_PAGES_DROPPED_VMA
++#undef NV_GET_USER_PAGES_DROPPED_VMA
 +#define NV_GET_USER_PAGES_DROPPED_VMA
-+#endif
++
++/* Type test overrides: conftest type tests fail to compile on 6.12+ */
++
++/* file_operations still has unlocked_ioctl/compat_ioctl in 6.12 */
++#undef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
++#define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
++#undef NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
++#define NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
++
++/* pm_message_t still exists as a struct in linux/pm.h on 6.12 */
++#undef NV_PM_MESSAGE_T_PRESENT
++#define NV_PM_MESSAGE_T_PRESENT
++
++/* struct file has f_inode (not f_dentry->d_inode) since 3.9 */
++#undef NV_FILE_HAS_INODE
++#define NV_FILE_HAS_INODE
++
++/* vm_area_struct has const vm_flags wrapper since 6.12 */
++#undef NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
++#define NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
 +
 +/* Type test overrides: conftest type tests fail to compile on 6.12+
 + * due to kernel header changes, so we set the correct values manually.
@@ -144,7 +148,7 @@
  #if !defined(NV_VMWARE)
  #define NV_KERNEL_NAME "Linux"
  #else
-@@ -1993,13 +2128,13 @@
+@@ -1993,13 +2132,13 @@
  
  #define NV_PROC_OPS_SET_OWNER() .owner = THIS_MODULE,
  
@@ -165,7 +169,7 @@
  #if defined(NV_PROC_DIR_ENTRY_HAS_OWNER)
  #define NV_SET_PROC_ENTRY_OWNER(entry) ((entry)->owner = THIS_MODULE)
  #else
-@@ -2121,13 +2256,12 @@
+@@ -2121,13 +2260,12 @@
          return single_open(filep, nv_procfs_read_##__name,                    \
              NV_PDE_DATA(inode));                                              \
      }                                                                         \
