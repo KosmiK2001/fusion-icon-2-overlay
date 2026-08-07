@@ -1,0 +1,16 @@
+diff '--color=auto' -Naru work-a/kernel/nv-linux.h work-b/kernel/nv-linux.h
+--- work-a/kernel/nv-linux.h	2026-08-06 01:38:36.571546116 -0000
++++ work-b/kernel/nv-linux.h	2026-08-06 01:41:22.640646443 -0000
+@@ -701,11 +701,7 @@
+     }
+ 
+ #if defined(NV_IOREMAP_NOCACHE_PRESENT)
+-#define NV_IOREMAP_NOCACHE(ptr, physaddr, size) \
+-    { \
+-        (ptr) = ioremap_nocache(physaddr, size); \
+-        VM_ALLOC_RECORD(ptr, size, "vm_ioremap_nocache"); \
+-    }
++#define NV_IOREMAP_NOCACHE NV_IOREMAP
+ #else
+ #define NV_IOREMAP_NOCACHE(ptr, physaddr, size) \
+     NV_IOREMAP(ptr, physaddr, size)

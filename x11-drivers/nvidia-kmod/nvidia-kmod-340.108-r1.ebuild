@@ -26,8 +26,12 @@ S="${WORKDIR}"
 PATCHES=(
 	"${FILESDIR}/0001-backport-error-on-unknown-conftests.patch"
 	"${FILESDIR}/0002-backport-error-on-unknown-conftests-uvm-part.patch"
+	"${FILESDIR}/0008-backport-drm_available-changes-from-361.16-v2.2.patch"
 	"${FILESDIR}/0009-backport-drm_driver_has_legacy_dev_list-changes-from.patch"
 	"${FILESDIR}/0010-backport-drm_gem_object_get-changes-from-418.30.patch"
+	"${FILESDIR}/0011-backport-nv_ioremap_nocache-changes-from-440.64-v2.2.patch"
+	"${FILESDIR}/0012-backport-nv_proc_ops_t-changes-from-440.82-v2.patch"
+	"${FILESDIR}/0013-backport-nv_timeval-changes-from-440.82-v2.patch"
 	"${FILESDIR}/0014-backport-nv_proc_ops_t-nv_timeval-changes-from-440.8.patch"
 	"${FILESDIR}/0015-drm_legacy_pci_init-was-moved-to-drm-drm_legacy.h.patch"
 	"${FILESDIR}/0016-backport-asm-pgtable_types.h-changes-from-390.138.patch"
@@ -69,6 +73,16 @@ PATCHES=(
 	"${FILESDIR}/0052-backport-cmd_symlink-changes-from-550.142.patch"
 	"${FILESDIR}/0064-backport-drm_driver_has_date-from-570.124.04-v2.patch"
 )
+
+src_prepare() {
+	# Apply patches with --force since some have partial failures
+	# (0008, 0011, 0012, 0013) but their successful hunks are needed
+	local p
+	for p in "${PATCHES[@]}"; do
+		eapply --force "${p}"
+	done
+	eapply_user
+}
 
 src_compile() {
 	local modlist=( nvidia=video:kernel )
