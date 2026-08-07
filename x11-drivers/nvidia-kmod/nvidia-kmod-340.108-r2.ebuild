@@ -220,7 +220,11 @@ src_prepare() {
 	# 14. Fix ACPI_VIDEO_HID: char* → acpi_device_id array
 	sed -i 's/\.ids = ACPI_VIDEO_HID,/.ids = (const struct acpi_device_id []){ {ACPI_VIDEO_HID, 0}, {""} },/' kernel/nv-acpi.c
 
-	# 15. Fix nv-procfs.c: file_operations → proc_ops (patch 0012 failed)
+	# 15. Fix nv-vm.c: set_memory_array_* removed in 6.12, use set_pages_array_*
+	sed -i 's/set_memory_array_uc/set_pages_array_uc/g' kernel/nv-vm.c
+	sed -i 's/set_memory_array_wb/set_pages_array_wb/g' kernel/nv-vm.c
+
+	# 16. Fix nv-procfs.c: file_operations → proc_ops (patch 0012 failed)
 	sed -i 's/struct file_operations nv_procfs_/struct proc_ops nv_procfs_/g' kernel/nv-procfs.c
 	sed -i '/\.owner.*THIS_MODULE,/d' kernel/nv-procfs.c
 	sed -i 's/\.open    = /.proc_open    = /g' kernel/nv-procfs.c
