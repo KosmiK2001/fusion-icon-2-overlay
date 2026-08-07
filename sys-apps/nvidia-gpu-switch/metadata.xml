@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>kosmik2001@gmail.com</email>
+    <name>kosmik2001</name>
+  </maintainer>
+  <longdescription>
+    GPU switch service for nvidia 340.108 on modern kernels.
+    Loads nouveau for boot splash (plymouth), then switches to nvidia
+    for X server. Includes GLVND bypass for nvidia 340.108 which
+    predates the GLVND architecture.
+  </longdescription>
+</pkgmetadata>

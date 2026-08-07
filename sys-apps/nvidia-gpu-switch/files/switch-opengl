@@ -1,0 +1,38 @@
+#!/bin/bash
+# Switch between nvidia and mesa OpenGL implementations
+# For nvidia 340.108 which predates GLVND
+
+case "$1" in
+    nvidia)
+        if [[ ! -f /usr/lib64/nvidia/libGL.so ]]; then
+            echo "ERROR: nvidia libGL.so not found"
+            exit 1
+        fi
+        if [[ ! -f /usr/lib64/libGLX.so.0.0.0.mesa-backup ]]; then
+            cp /usr/lib64/libGLX.so.0.0.0 /usr/lib64/libGLX.so.0.0.0.mesa-backup
+        fi
+        cp /usr/lib64/nvidia/libGL.so /usr/lib64/libGLX.so.0.0.0
+        echo "OpenGL set to NVIDIA. Restart X server for changes to take effect."
+        ;;
+    mesa)
+        if [[ -f /usr/lib64/libGLX.so.0.0.0.mesa-backup ]]; then
+            cp /usr/lib64/libGLX.so.0.0.0.mesa-backup /usr/lib64/libGLX.so.0.0.0
+            echo "OpenGL set to Mesa. Restart X server for changes to take effect."
+        else
+            echo "ERROR: Mesa backup not found"
+            exit 1
+        fi
+        ;;
+    status|"")
+        md5=$(md5sum /usr/lib64/libGLX.so.0.0.0 2>/dev/null | cut -d' ' -f1)
+        nvidia_md5=$(md5sum /usr/lib64/nvidia/libGL.so 2>/dev/null | cut -d' ' -f1)
+        if [[ "$md5" == "$nvidia_md5" ]]; then
+            echo "Current: NVIDIA"
+        else
+            echo "Current: Mesa"
+        fi
+        ;;
+    *)
+        echo "Usage: switch-opengl [nvidia|mesa|status]"
+        ;;
+esac

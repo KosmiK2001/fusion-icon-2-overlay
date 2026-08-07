@@ -1,0 +1,14 @@
+[Unit]
+Description=Switch from nouveau to nvidia before display manager
+After=systemd-udevd.service
+Before=lightdm.service gdm.service sddm.service display-manager.service
+Wants=systemd-udevd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/gpu-switch-to-nvidia
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

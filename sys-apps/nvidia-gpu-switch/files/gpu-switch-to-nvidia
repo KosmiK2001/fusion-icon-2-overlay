@@ -1,0 +1,22 @@
+#!/bin/bash
+# Switch from nouveau to nvidia for display manager
+# nouveau handles boot splash (plymouth), nvidia handles X/3D
+
+echo "gpu-switch: Unloading nouveau..."
+modprobe -rf nouveau 2>/dev/null || true
+sleep 1
+
+echo "gpu-switch: Loading nvidia..."
+modprobe nvidia 2>/dev/null || true
+
+# Apply GLVND fix if needed (nvidia 340.108 predates GLVND)
+if [[ -f /usr/lib64/nvidia/libGL.so ]]; then
+    md5_current=$(md5sum /usr/lib64/libGLX.so.0.0.0 2>/dev/null | cut -d' ' -f1)
+    md5_nvidia=$(md5sum /usr/lib64/nvidia/libGL.so 2>/dev/null | cut -d' ' -f1)
+    if [[ "$md5_current" != "$md5_nvidia" ]]; then
+        echo "gpu-switch: Applying GLVND bypass..."
+        cp /usr/lib64/nvidia/libGL.so /usr/lib64/libGLX.so.0.0.0
+    fi
+fi
+
+echo "gpu-switch: Done. nvidia loaded for display manager."
