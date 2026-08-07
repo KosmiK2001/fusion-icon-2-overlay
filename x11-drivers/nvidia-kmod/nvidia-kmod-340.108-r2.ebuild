@@ -92,89 +92,86 @@ src_prepare() {
 	done
 
 	# === Kernel 6.12+ fixes ===
-	# All fixes are applied AFTER patches but BEFORE compile.
-	# We modify conftest output files and source files directly.
 
-	# 1. Fix conftest/functions.h: append correct values that override
-	#    the (possibly wrong) values from conftest.sh detection.
-	cat >> kernel/conftest/functions.h <<'EOF'
+	# 1. Fix conftest.sh: override type test results for 6.12+
+	#    Append to conftest.sh before the final esac so it outputs correct values.
+	#    Actually, we need to modify the output files, but they don't exist yet.
+	#    Instead, inject overrides into nv-linux.h after conftest.h include.
 
-/* === Kernel 6.12+ overrides (appended by ebuild) === */
-#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
-#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
-#undef NV_PCI_SAVE_STATE_ARGUMENT_COUNT
-#define NV_PCI_SAVE_STATE_ARGUMENT_COUNT 1
-EOF
+	# 2. Inject conftest overrides into nv-linux.h AFTER #include "conftest.h"
+	#    Use sed to add a block of #undef+#define after the conftest include.
+	sed -i '/#include "conftest.h"/a\
+/* === Kernel 6.12+ conftest overrides === */\
+#include <linux/version.h>\
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)\
+#undef NV_KMEM_CACHE_CREATE_PRESENT\
+#define NV_KMEM_CACHE_CREATE_PRESENT\
+#undef NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT\
+#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5\
+#undef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT\
+#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT\
+#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT\
+#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7\
+#undef NV_PCI_SAVE_STATE_ARGUMENT_COUNT\
+#define NV_PCI_SAVE_STATE_ARGUMENT_COUNT 1\
+#undef NV_GET_USER_PAGES_HAS_TASK_STRUCT\
+#undef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS\
+#undef NV_GET_USER_PAGES_DROPPED_VMA\
+#define NV_GET_USER_PAGES_DROPPED_VMA\
+#undef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL\
+#define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL\
+#undef NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL\
+#define NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL\
+#undef NV_PM_MESSAGE_T_PRESENT\
+#define NV_PM_MESSAGE_T_PRESENT\
+#undef NV_FILE_HAS_INODE\
+#define NV_FILE_HAS_INODE\
+#undef NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS\
+#define NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS\
+#undef NV_PROC_OPS_PRESENT\
+#define NV_PROC_OPS_PRESENT\
+#undef NV_HAVE_PROC_OPS\
+#define NV_HAVE_PROC_OPS\
+#endif' kernel/nv-linux.h || die "Failed to inject conftest overrides"
 
-	# 2. Fix conftest/types.h: force correct type detection results
-	cat >> kernel/conftest/types.h <<'EOF'
+	# 3. Fix stray '+' from patch 0012 (git merge artifact)
+	sed -i 's/^+#define /#define /g' kernel/nv-linux.h
+	sed -i 's/^+#endif/#endif/g' kernel/nv-linux.h
 
-/* === Kernel 6.12+ overrides (appended by ebuild) === */
-#undef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
-#define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
-#undef NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
-#define NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
-#undef NV_PM_MESSAGE_T_PRESENT
-#define NV_PM_MESSAGE_T_PRESENT
-#undef NV_HAVE_PROC_OPS
-#define NV_HAVE_PROC_OPS
-#undef NV_FILE_HAS_INODE
-#define NV_FILE_HAS_INODE
-#undef NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
-#define NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
-EOF
+	# 4. Fix pm_message_t typedef: wrap in #ifndef
+	sed -i 's/^typedef u32 pm_message_t;/#ifndef NV_PM_MESSAGE_T_PRESENT\ntypedef u32 pm_message_t;\n#endif/' kernel/nv-linux.h
 
-	# 3. Fix nv-linux.h: remove stray '+' from git merge artifact
-	sed -i 's/^+#define NV_PROC_OPS_OPEN/#define NV_PROC_OPS_OPEN/' kernel/nv-linux.h
-	sed -i 's/^+#define NV_PROC_OPS_READ/#define NV_PROC_OPS_READ/' kernel/nv-linux.h
-	sed -i 's/^+#define NV_PROC_OPS_WRITE/#define NV_PROC_OPS_WRITE/' kernel/nv-linux.h
-	sed -i 's/^+#define NV_PROC_OPS_LSEEK/#define NV_PROC_OPS_LSEEK/' kernel/nv-linux.h
-	sed -i 's/^+#define NV_PROC_OPS_RELEASE/#define NV_PROC_OPS_RELEASE/' kernel/nv-linux.h
-	sed -i 's/^+#endif/#endif/' kernel/nv-linux.h
+	# 5. Fix pci_save_state: 1-arg version
+	sed -i 's/pci_save_state(dev, &nv->pci_cfg_space\[0\])/pci_save_state(dev)/' kernel/nv-linux.h
+	sed -i 's/pci_restore_state(dev, &nv->pci_cfg_space\[0\])/pci_restore_state(dev)/' kernel/nv-linux.h
 
-	# 4. Fix pm_message_t typedef: wrap in #ifndef to avoid conflict
-	sed -i 's/^typedef u32 pm_message_t;/#if !defined(NV_PM_MESSAGE_T_PRESENT)\ntypedef u32 pm_message_t;\n#endif/' kernel/nv-linux.h
-
-	# 5. Fix pci_save_state/restore_state: 1-arg version
-	sed -i 's/pci_save_state(dev, &nv->pci_cfg_space\[0\]);/pci_save_state(dev);/' kernel/nv-linux.h
-	sed -i 's/pci_restore_state(dev, &nv->pci_cfg_space\[0\]);/pci_restore_state(dev);/' kernel/nv-linux.h
-
-	# 6. Fix NV_FILE_INODE: use f_inode instead of f_dentry->d_inode
+	# 6. Fix NV_FILE_INODE: use f_inode
 	sed -i 's/(file)->f_dentry->d_inode/(file)->f_inode/' kernel/nv-linux.h
 
 	# 7. Fix NV_DEFINE_PROCFS_SINGLE_FILE: remove blank line breaking \ continuation
 	sed -i '/^    }                                                                         \\$/{n;/^$/d}' kernel/nv-linux.h
 
-	# 8. Fix get_user_pages: replace 8-arg call with 4-arg
-	#    The inline function NV_GET_USER_PAGES converts write/force to flags,
-	#    then calls get_user_pages with the old args. We need to fix the call.
-	sed -i '/return get_user_pages(current, current->mm,/{
-		s/get_user_pages(current, current->mm, start, nr_pages, flags,/get_user_pages(start, nr_pages, flags,/
-		s/get_user_pages(current, current->mm, start, nr_pages, write,/get_user_pages(start, nr_pages, flags,/
-	}' kernel/nv-linux.h
-	sed -i 's/return get_user_pages(start, nr_pages, flags, pages, vmas);/return get_user_pages(start, nr_pages, flags, pages);/' kernel/nv-linux.h
+	# 8. Fix get_user_pages: 8-arg → 4-arg API
+	sed -i 's/get_user_pages(current, current->mm, start, nr_pages, flags,/get_user_pages(start, nr_pages, flags,/' kernel/nv-linux.h
+	sed -i 's/get_user_pages(current, current->mm, start, nr_pages, write,/get_user_pages(start, nr_pages, flags,/' kernel/nv-linux.h
+	sed -i 's/get_user_pages(start, nr_pages, flags, pages, vmas)/get_user_pages(start, nr_pages, flags, pages)/' kernel/nv-linux.h
 
-	# 9. Fix get_user_pages_remote: remove NULL tsk arg, use modern signature
-	sed -i 's/return get_user_pages_remote(NULL, mm,/return get_user_pages_remote(mm,/' kernel/nv-linux.h
-	sed -i 's/return get_user_pages_remote(mm, start, nr_pages, flags, pages, vmas, NULL);/return get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL);/' kernel/nv-linux.h
+	# 9. Fix get_user_pages_remote: remove NULL tsk arg
+	sed -i 's/get_user_pages_remote(NULL, mm,/get_user_pages_remote(mm,/' kernel/nv-linux.h
+	sed -i 's/get_user_pages_remote(mm, start, nr_pages, flags, pages, vmas, NULL)/get_user_pages_remote(mm, start, nr_pages, flags, pages, NULL)/' kernel/nv-linux.h
 
-	# 10. Fix vm_flags: use helper functions instead of direct assignment
-	sed -i '/^static inline void nv_vm_flags_set/,/^}/{
-		s/vma->vm_flags |= flags;/vm_flags_set(vma, flags);/
-	}' kernel/nv-linux.h
-	sed -i '/^static inline void nv_vm_flags_clear/,/^}/{
-		s/vma->vm_flags &= ~flags;/vm_flags_clear(vma, flags);/
-	}' kernel/nv-linux.h
+	# 10. Fix vm_flags: use helpers
+	sed -i '/^static inline void nv_vm_flags_set/,/^}/{s/vma->vm_flags |= flags;/vm_flags_set(vma, flags);/}' kernel/nv-linux.h
+	sed -i '/^static inline void nv_vm_flags_clear/,/^}/{s/vma->vm_flags &= ~flags;/vm_flags_clear(vma, flags);/}' kernel/nv-linux.h
 
-	# 11. Fix request_irq: ISR signature changed (no pt_regs arg)
+	# 11. Fix nv-acpi.c: nv_acpi_integer_t → u64
+	sed -i 's/nv_acpi_integer_t/u64/g' kernel/nv-acpi.c
+
+	# 12. Fix request_irq: ISR signature (no pt_regs)
 	sed -i 's/static irqreturn_t   nvidia_isr            (int, void \*, struct pt_regs \*);/static irqreturn_t   nvidia_isr            (int, void *);/' kernel/nv.c
 	sed -i 's/irqreturn_t nv_gvi_kern_isr             (int, void \*, struct pt_regs \*);/irqreturn_t nv_gvi_kern_isr             (int, void *);/' kernel/nv-proto.h
-
-	# 12. Fix acpi_evaluate_integer: nv_acpi_integer_t is u32, kernel wants u64
-	sed -i 's/nv_acpi_integer_t/nv_u64_t/g' kernel/nv-acpi.c kernel/nv-acpi.h 2>/dev/null || true
-
-	# 13. Fix acpi_bus_get_device: removed in 6.12, use acpi_fetch_acpi_dev
-	sed -i 's/retVal = acpi_bus_get_device(nvif_parent_gpu_handle, &device);/retVal = acpi_bus_get_device(nvif_parent_gpu_handle, \&device);  \/\/ FIXME: removed in 6.12/' kernel/nv-acpi.c 2>/dev/null || true
+	# Fix the function definition too
+	sed -i '/^nvidia_isr($/,/^}/{s/struct pt_regs \*regs/unused_pt_regs/;s/, *unused_pt_regs//}' kernel/nv.c
 
 	eapply_user
 }
@@ -208,7 +205,6 @@ See '${EPREFIX}/etc/modprobe.d/nvidia.conf' for modules options."
 }
 
 pkg_preinst() {
-	# set video group id based on live system (bug #49414)
 	local g=$(getent group video | cut -d: -f3)
 	[[ ${g} =~ ^[0-9]+$ ]] || die "Failed to determine video group id (got '${g}')"
 	sed -i "s/@VIDEOGID@/${g}/" "${ED}"/etc/modprobe.d/nvidia.conf || die
@@ -216,6 +212,5 @@ pkg_preinst() {
 
 pkg_postinst() {
 	linux-mod-r1_pkg_postinst
-
 	readme.gentoo_print_elog
 }
