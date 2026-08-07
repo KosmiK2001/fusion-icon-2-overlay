@@ -233,7 +233,16 @@ src_prepare() {
 	# 15b. Fix efi_enabled: is a function in modern kernels, not a variable
 	sed -i 's/#define NV_EFI_ENABLED() efi_enabled/#define NV_EFI_ENABLED() efi_enabled(EFI_BOOT)/' kernel/nv-linux.h
 
-	# 15c. Fix ioremap_nocache: removed in 6.12, use ioremap
+	# 15c. Fix struct timeval: removed from kernel headers in 6.12
+	sed -i '/#include <linux\/time.h>/a\
+#if !defined(_STRUCT_TIMEVAL) \&\& !defined(_LINUX_TIME_H)\
+struct timeval {\
+    long tv_sec;\
+    long tv_usec;\
+};\
+#endif' kernel/nv-time.h
+
+	# 15d. Fix ioremap_nocache: removed in 6.12, use ioremap
 	sed -i 's/ioremap_nocache/ioremap/' kernel/nv-linux.h
 
 	# 15d. mmap_sem → mmap_lock: handled by NV_MM_HAS_MMAP_LOCK in override block
