@@ -223,6 +223,12 @@ src_prepare() {
 	# 15. Fix nv-vm.c: set_memory_array_* removed in 6.12, use set_pages_array_*
 	sed -i 's/set_memory_array_uc/set_pages_array_uc/g' kernel/nv-vm.c
 	sed -i 's/set_memory_array_wb/set_pages_array_wb/g' kernel/nv-vm.c
+	# set_pages_array_* expects struct page **, driver passes unsigned long *
+	sed -i 's/set_pages_array_uc(pages,/set_pages_array_uc((struct page **)pages,/' kernel/nv-vm.c
+	sed -i 's/set_pages_array_wb(pages,/set_pages_array_wb((struct page **)pages,/' kernel/nv-vm.c
+
+	# 15b. Fix efi_enabled: is a function in modern kernels, not a variable
+	sed -i 's/#define NV_EFI_ENABLED() efi_enabled/#define NV_EFI_ENABLED() efi_enabled(EFI_BOOT)/' kernel/nv-linux.h
 
 	# 16. Fix nv-procfs.c: file_operations → proc_ops (patch 0012 failed)
 	sed -i 's/struct file_operations nv_procfs_/struct proc_ops nv_procfs_/g' kernel/nv-procfs.c
