@@ -37,8 +37,10 @@ S="${WORKDIR}/${PN}-0.8.18"
 src_prepare() {
 	default
 
-	# Fix missing stdlib.h include in wallpaper.c (RAND_MAX undeclared)
-	eapply "${FILESDIR}/stdlib-fix.patch"
+	# Fix implicit malloc/calloc/free declarations for GCC 14+
+	find src -name "*.c" -exec grep -l "malloc\|calloc\|free\|realloc" {} + | while read f; do
+		grep -q "stdlib.h" "$f" || sed -i '2a #include <stdlib.h>' "$f"
+	done
 
 	# 3D Windows plugin performance optimizations
 	eapply "${FILESDIR}/3d-performance.patch"

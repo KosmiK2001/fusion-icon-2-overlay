@@ -37,7 +37,12 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/addhelper-stdlib.patch"
+
+	# Fix implicit malloc/calloc/free declarations for GCC 14+
+	find src -name "*.c" -exec grep -l "malloc\|calloc\|free\|realloc" {} + | while read f; do
+		grep -q "stdlib.h" "$f" || sed -i '2a #include <stdlib.h>' "$f"
+	done
+
 	eautoreconf
 }
 
