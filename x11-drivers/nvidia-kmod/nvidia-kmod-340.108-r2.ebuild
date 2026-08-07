@@ -139,6 +139,9 @@ src_prepare() {
 #define NV_IRQ_HANDLER_T_PRESENT\
 #undef NV_IRQ_HANDLER_T_ARGUMENT_COUNT\
 #define NV_IRQ_HANDLER_T_ARGUMENT_COUNT 2\
+/* scatterlist: page_link instead of page since 3.6 */\
+#undef NV_SCATTERLIST_HAS_PAGE_LINK\
+#define NV_SCATTERLIST_HAS_PAGE_LINK\
 /* type tests */\
 #undef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL\
 #define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL\
