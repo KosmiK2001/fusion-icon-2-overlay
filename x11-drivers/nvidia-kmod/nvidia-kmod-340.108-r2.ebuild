@@ -139,6 +139,9 @@ src_prepare() {
 #define NV_IRQ_HANDLER_T_PRESENT\
 #undef NV_IRQ_HANDLER_T_ARGUMENT_COUNT\
 #define NV_IRQ_HANDLER_T_ARGUMENT_COUNT 2\
+/* console_lock replaces acquire_console_sem since 2.6.38 */\
+#undef NV_CONSOLE_LOCK_PRESENT\
+#define NV_CONSOLE_LOCK_PRESENT\
 /* mmap_sem renamed to mmap_lock since 5.8 */\
 #undef NV_MM_HAS_MMAP_LOCK\
 #define NV_MM_HAS_MMAP_LOCK\
@@ -240,9 +243,9 @@ struct timeval {\
     long tv_usec;\
 };' kernel/nv-time.h
 
-	# 15e. Fix acquire_console_sem/release_console_sem: renamed to console_lock/unlock
-	sed -i 's/NV_ACQUIRE_CONSOLE_SEM()/console_lock()/g' kernel/nv-linux.h
-	sed -i 's/NV_RELEASE_CONSOLE_SEM()/console_unlock()/g' kernel/nv-linux.h
+	# 15e. console_lock: handled by NV_CONSOLE_LOCK_PRESENT in override block
+	# 15f. do_gettimeofday: removed in 6.12, use ktime path
+	sed -i 's/#ifdef NV_DO_GETTIMEOFDAY_PRESENT/#ifdef NV_DO_GETTIMEOFDAY_REMOVED/' kernel/nv-time.h
 
 	# 15d. Fix ioremap_nocache: removed in 6.12, use ioremap
 	sed -i 's/ioremap_nocache/ioremap/' kernel/nv-linux.h
