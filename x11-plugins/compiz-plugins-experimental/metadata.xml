@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<upstream>
+		<remote-id type="gitlab">compiz/compiz-plugins-experimental</remote-id>
+		<bugs-to>https://gitlab.com/compiz/compiz-plugins-experimental/issues</bugs-to>
+	</upstream>
+	<longdescription lang="en">Experimental plugins for the Compiz compositing window manager.</longdescription>
+</pkgmetadata>
