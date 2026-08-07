@@ -235,12 +235,14 @@ src_prepare() {
 
 	# 15c. Fix struct timeval: removed from kernel headers in 6.12
 	sed -i '/#include <linux\/time.h>/a\
-#if !defined(_STRUCT_TIMEVAL) \&\& !defined(_LINUX_TIME_H)\
 struct timeval {\
     long tv_sec;\
     long tv_usec;\
-};\
-#endif' kernel/nv-time.h
+};' kernel/nv-time.h
+
+	# 15e. Fix acquire_console_sem/release_console_sem: renamed to console_lock/unlock
+	sed -i 's/NV_ACQUIRE_CONSOLE_SEM()/console_lock()/g' kernel/nv-linux.h
+	sed -i 's/NV_RELEASE_CONSOLE_SEM()/console_unlock()/g' kernel/nv-linux.h
 
 	# 15d. Fix ioremap_nocache: removed in 6.12, use ioremap
 	sed -i 's/ioremap_nocache/ioremap/' kernel/nv-linux.h
