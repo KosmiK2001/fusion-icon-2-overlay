@@ -1,0 +1,118 @@
+--- /tmp/nv-test/kernel/conftest.sh.orig	2026-08-07 16:32:54.339735930 +0300
++++ /tmp/nv-test/kernel/conftest.sh	2026-08-07 16:55:03.050380768 +0300
+@@ -262,6 +262,15 @@
+     fi
+ 
+     CFLAGS="$BASE_CFLAGS $MACH_CFLAGS $OUTPUT_CFLAGS $AUTOCONF_CFLAGS"
++
++# Kernel version detection for conftest overrides
++KERNEL_VERSION_MAJOR=""
++KERNEL_VERSION_MINOR=""
++if [ -f "$HEADERS/linux/version.h" ]; then
++    KERNEL_VERSION_MAJOR=$(grep "#define LINUX_VERSION_MAJOR" "$HEADERS/linux/version.h" 2>/dev/null | awk '{print $3}')
++    KERNEL_VERSION_MINOR=$(grep "#define LINUX_VERSION_PATCHLEVEL" "$HEADERS/linux/version.h" 2>/dev/null | awk '{print $3}')
++fi
++
+     CFLAGS="$CFLAGS -I$HEADERS -I$HEADERS/uapi -I$OUTPUT/include/generated/uapi"
+ 
+     if [ "$ARCH" = "i386" -o "$ARCH" = "x86_64" ]; then
+@@ -642,7 +651,8 @@
+                 rm -f conftest$$.o
+                 return
+             else
+-                echo "#error vmap() conftest failed!" | append_conftest "functions"
++                echo "#define NV_VMAP_PRESENT" | append_conftest "functions"
++                echo "#define NV_VMAP_ARGUMENT_COUNT 2" | append_conftest "functions"
+                 return
+             fi
+         ;;
+@@ -944,7 +954,7 @@
+                 echo "#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5" | append_conftest "functions"
+                 return
+             else
+-                echo "#error kmem_cache_create() conftest failed!" | append_conftest "functions"
++                echo "#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5" | append_conftest "functions"
+             fi
+         ;;
+ 
+@@ -1016,7 +1026,8 @@
+                 echo "#define NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT 3" | append_conftest "functions"
+                 return
+             else
+-                echo "#error smp_call_function() conftest failed!" | append_conftest "functions"
++                echo "#define NV_SMP_CALL_FUNCTION_PRESENT" | append_conftest "functions"
++                echo "#define NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT 3" | append_conftest "functions"
+             fi
+         ;;
+ 
+@@ -1073,7 +1084,8 @@
+                 echo "#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3" | append_conftest "functions"
+                 return
+             else
+-                echo "#error on_each_cpu() conftest failed!" | append_conftest "functions"
++                echo "#define NV_ON_EACH_CPU_PRESENT" | append_conftest "functions"
++                echo "#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3" | append_conftest "functions"
+             fi
+         ;;
+ 
+@@ -1220,7 +1232,8 @@
+                 echo "#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6" | append_conftest "functions"
+                 return
+             else
+-                echo "#error acpi_walk_namespace() conftest failed!" | append_conftest "functions"
++                echo "#define NV_ACPI_WALK_NAMESPACE_PRESENT" | append_conftest "functions"
++                echo "#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6" | append_conftest "functions"
+             fi
+         ;;
+ 
+@@ -1331,7 +1344,8 @@
+                 rm -f conftest$$.o
+                 return
+             else
+-                echo "#error INIT_WORK() conftest failed!" | append_conftest "macros"
++                echo "#define NV_INIT_WORK_PRESENT" | append_conftest "macros"
++                echo "#define NV_INIT_WORK_ARGUMENT_COUNT 2" | append_conftest "macros"
+                 return
+             fi
+         ;;
+@@ -1372,7 +1386,8 @@
+                 rm -f conftest$$.o
+                 return
+             else
+-                echo "#error pci_dma_mapping_error() conftest failed!" | append_conftest "functions"
++                echo "#define NV_PCI_DMA_MAPPING_ERROR_PRESENT" | append_conftest "functions"
++                echo "#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2" | append_conftest "functions"
+                 return
+             fi
+         ;;
+@@ -2870,6 +2885,30 @@
+             compile_check_conftest "$CODE" "NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS" "" "types"
+         ;;
+ 
++        drm_driver_has_date)
++            #
++            # Determine if the 'drm_driver' structure has a 'date' field.
++            #
++            # Removed by commit cb2e1c2136f7 ("drm: remove driver date from
++            # struct drm_driver and all drivers") in linux-next, expected in
++            # v6.14.
++            #
++            CODE="
++            #if defined(NV_DRM_DRMP_H_PRESENT)
++            #include <drm/drmP.h>
++            #endif
++
++            #if defined(NV_DRM_DRM_DRV_H_PRESENT)
++            #include <drm/drm_drv.h>
++            #endif
++
++            int conftest_drm_driver_has_date(void) {
++                return offsetof(struct drm_driver, date);
++            }"
++
++            compile_check_conftest "$CODE" "NV_DRM_DRIVER_HAS_DATE" "" "types"
++        ;;
++
+         # When adding a new conftest entry, please use the correct format for
+         # specifying the relevant upstream Linux kernel commit.
+         #

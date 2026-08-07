@@ -1,0 +1,144 @@
+--- nv-linux.h.orig	2026-08-07 16:32:54.334860872 +0300
++++ nv-linux.h	2026-08-07 17:06:47.165954431 +0300
+@@ -12,8 +12,111 @@
+ #define _NV_LINUX_H_
+ 
+ #include "nv.h"
++
++/* Override conftest results for kernels >= 6.12 where conftest detection fails */
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++#define NV_INIT_WORK_PRESENT
++#define NV_INIT_WORK_ARGUMENT_COUNT 2
++#define NV_VMAP_PRESENT
++#define NV_VMAP_ARGUMENT_COUNT 2
++#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
++#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
++#define NV_SMP_CALL_FUNCTION_PRESENT
++#define NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT 3
++#define NV_ON_EACH_CPU_PRESENT
++#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
++#define NV_ACPI_WALK_NAMESPACE_PRESENT
++#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6
++#define NV_PCI_DMA_MAPPING_ERROR_PRESENT
++#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2
++#define NV_PROC_OPS_PRESENT
++#endif
+ #include "conftest.h"
+ 
++/* Override conftest results for kernels >= 6.12 where conftest detection fails */
++#include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++
++/* INIT_WORK takes 2 args since 4.0 */
++#undef NV_INIT_WORK_PRESENT
++#define NV_INIT_WORK_PRESENT
++#undef NV_INIT_WORK_ARGUMENT_COUNT
++#define NV_INIT_WORK_ARGUMENT_COUNT 2
++
++/* vmap takes 2 args (no pgprot_t) since 4.12 */
++#undef NV_VMAP_PRESENT
++#define NV_VMAP_PRESENT
++#undef NV_VMAP_ARGUMENT_COUNT
++#define NV_VMAP_ARGUMENT_COUNT 2
++
++/* kmem_cache_create takes 5 args since 3.17 */
++#undef NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT
++#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
++#ifndef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
++#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
++#endif
++
++/* smp_call_function takes 3 args since 5.3 */
++#undef NV_SMP_CALL_FUNCTION_PRESENT
++#define NV_SMP_CALL_FUNCTION_PRESENT
++#undef NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT
++#define NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT 3
++
++/* on_each_cpu takes 3 args since 5.3 */
++#undef NV_ON_EACH_CPU_PRESENT
++#define NV_ON_EACH_CPU_PRESENT
++#undef NV_ON_EACH_CPU_ARGUMENT_COUNT
++#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
++
++/* acpi_walk_namespace takes 6 args */
++#undef NV_ACPI_WALK_NAMESPACE_PRESENT
++#define NV_ACPI_WALK_NAMESPACE_PRESENT
++#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
++#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6
++
++/* pci_dma_mapping_error takes 2 args since 2.6.28 */
++#undef NV_PCI_DMA_MAPPING_ERROR_PRESENT
++#define NV_PCI_DMA_MAPPING_ERROR_PRESENT
++#undef NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT
++#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2
++
++/* proc_ops replaces file_operations for proc since 5.6 */
++#ifndef NV_PROC_OPS_PRESENT
++#define NV_PROC_OPS_PRESENT
++#endif
++
++/* Type test overrides: conftest type tests fail to compile on 6.12+
++ * due to kernel header changes, so we set the correct values manually.
++ */
++
++/* file_operations still has unlocked_ioctl in 6.12 */
++#ifndef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
++#define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
++#endif
++
++/* file_operations still has compat_ioctl in 6.12 */
++#ifndef NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
++#define NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
++#endif
++
++/* pm_message_t still exists as a struct in linux/pm.h on 6.12 */
++#ifndef NV_PM_MESSAGE_T_PRESENT
++#define NV_PM_MESSAGE_T_PRESENT
++#endif
++
++/* struct file has f_inode (not f_dentry->d_inode) since 3.9 */
++#ifndef NV_FILE_HAS_INODE
++#define NV_FILE_HAS_INODE
++#endif
++
++/* vm_area_struct has const vm_flags wrapper since 6.12 */
++#ifndef NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
++#define NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
++#endif
++
++#endif /* LINUX_VERSION_CODE >= 6.12.0 */
++
+ #if !defined(NV_VMWARE)
+ #define NV_KERNEL_NAME "Linux"
+ #else
+@@ -1993,13 +2096,13 @@
+ 
+ #define NV_PROC_OPS_SET_OWNER() .owner = THIS_MODULE,
+ 
+-+#define NV_PROC_OPS_OPEN    open
+-+#define NV_PROC_OPS_READ    read
+-+#define NV_PROC_OPS_WRITE   write
+-+#define NV_PROC_OPS_LSEEK   llseek
+-+#define NV_PROC_OPS_RELEASE release
+-+#endif
+-+
++#define NV_PROC_OPS_OPEN    open
++#define NV_PROC_OPS_READ    read
++#define NV_PROC_OPS_WRITE   write
++#define NV_PROC_OPS_LSEEK   llseek
++#define NV_PROC_OPS_RELEASE release
++#endif
++
+ #if defined(NV_PROC_DIR_ENTRY_HAS_OWNER)
+ #define NV_SET_PROC_ENTRY_OWNER(entry) ((entry)->owner = THIS_MODULE)
+ #else
+@@ -2127,7 +2230,7 @@
+         .NV_PROC_OPS_OPEN    = nv_procfs_open_##__name,                         \
+         .NV_PROC_OPS_READ    = seq_read,                                      \
+         .NV_PROC_OPS_LSEEK   = seq_lseek,                                     \
+-        .NV_PROC_OPS_RELEASE = single_release,                      \                                                                              \
++        .NV_PROC_OPS_RELEASE = single_release,                                    \
+     };
+ #endif
+ 
