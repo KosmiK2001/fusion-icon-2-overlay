@@ -73,7 +73,6 @@ PATCHES=(
 	"${FILESDIR}/0052-backport-cmd_symlink-changes-from-550.142.patch"
 	"${FILESDIR}/0064-backport-drm_driver_has_date-from-570.124.04-v2.patch"
 	"${FILESDIR}/0065-conftest-sh-fix-kernel-6.12.patch"
-	"${FILESDIR}/0066-nv-linux-h-type-test-overrides-kernel-6.12.patch"
 )
 
 src_prepare() {
@@ -92,6 +91,105 @@ src_prepare() {
 				;;
 		esac
 	done
+
+	# Kernel 6.12+ conftest overrides: inject after #include "conftest.h"
+	# in nv-linux.h. conftest detection is broken on modern kernels, so we
+	# forcefully override with #undef+#define after conftest.h sets its values.
+	cat > "${T}/conftest-overrides.h" <<'OVERRIDE_EOF'
+/* === Kernel 6.12+ conftest overrides (injected by ebuild) === */
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
+
+/* functional tests */
+#undef NV_INIT_WORK_PRESENT
+#define NV_INIT_WORK_PRESENT
+#undef NV_INIT_WORK_ARGUMENT_COUNT
+#define NV_INIT_WORK_ARGUMENT_COUNT 2
+
+#undef NV_VMAP_PRESENT
+#define NV_VMAP_PRESENT
+#undef NV_VMAP_ARGUMENT_COUNT
+#define NV_VMAP_ARGUMENT_COUNT 2
+
+#undef NV_KMEM_CACHE_CREATE_PRESENT
+#define NV_KMEM_CACHE_CREATE_PRESENT
+#undef NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT
+#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
+#undef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
+#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
+
+#undef NV_SMP_CALL_FUNCTION_PRESENT
+#define NV_SMP_CALL_FUNCTION_PRESENT
+#undef NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT
+#define NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT 3
+
+#undef NV_ON_EACH_CPU_PRESENT
+#define NV_ON_EACH_CPU_PRESENT
+#undef NV_ON_EACH_CPU_ARGUMENT_COUNT
+#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
+
+#undef NV_ACPI_WALK_NAMESPACE_PRESENT
+#define NV_ACPI_WALK_NAMESPACE_PRESENT
+#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
+#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
+
+#undef NV_PCI_DMA_MAPPING_ERROR_PRESENT
+#define NV_PCI_DMA_MAPPING_ERROR_PRESENT
+#undef NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT
+#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2
+
+/* proc_ops */
+#undef NV_PROC_OPS_PRESENT
+#define NV_PROC_OPS_PRESENT
+#undef NV_HAVE_PROC_OPS
+#define NV_HAVE_PROC_OPS
+
+/* pci_save_state: 1 arg since 2.6.29 */
+#undef NV_PCI_SAVE_STATE_ARGUMENT_COUNT
+#define NV_PCI_SAVE_STATE_ARGUMENT_COUNT 1
+
+/* get_user_pages: 4-arg API since 5.8 */
+#undef NV_GET_USER_PAGES_HAS_TASK_STRUCT
+#undef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS
+#undef NV_GET_USER_PAGES_DROPPED_VMA
+#define NV_GET_USER_PAGES_DROPPED_VMA
+
+/* type tests */
+#undef NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
+#define NV_FILE_OPERATIONS_HAS_UNLOCKED_IOCTL
+#undef NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
+#define NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL
+#undef NV_PM_MESSAGE_T_PRESENT
+#define NV_PM_MESSAGE_T_PRESENT
+#undef NV_FILE_HAS_INODE
+#define NV_FILE_HAS_INODE
+#undef NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
+#define NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS
+
+#endif /* >= 6.12.0 */
+OVERRIDE_EOF
+
+	# Insert overrides right after #include "conftest.h" in nv-linux.h
+	sed -i '/#include "conftest.h"/r '"${T}"'/conftest-overrides.h' \
+		kernel/nv-linux.h || die "Failed to inject conftest overrides"
+
+	# Fix NV_GET_USER_PAGES macro for 4-arg API:
+	# Replace the 8-arg get_user_pages(current, current->mm, ...) calls
+	# with the modern 4-arg signature.
+	sed -i 's/return get_user_pages(current, current->mm, start, nr_pages, flags,/return get_user_pages(start, nr_pages, flags,/' \
+		kernel/nv-linux.h || die "Failed to fix get_user_pages"
+	sed -i 's/return get_user_pages(current, current->mm, start, nr_pages, write,/return get_user_pages(start, nr_pages, write,/' \
+		kernel/nv-linux.h || die "Failed to fix get_user_pages (2)"
+
+	# Fix get_user_pages_remote: remove tsk arg (NULL) for modern API
+	sed -i 's/return get_user_pages_remote(NULL, mm,/return get_user_pages_remote(mm,/' \
+		kernel/nv-linux.h || die "Failed to fix get_user_pages_remote"
+
+	# Fix NV_DEFINE_PROCFS_SINGLE_FILE: remove blank line that breaks \ continuation
+	# The #else branch has a blank line between } and static const nv_proc_ops_t
+	sed -i '/^    }                                                                         \\$/{n;/^$/d}' \
+		kernel/nv-linux.h || die "Failed to fix procfs macro"
+
 	eapply_user
 }
 
