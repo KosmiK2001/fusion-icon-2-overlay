@@ -1,5 +1,5 @@
---- /tmp/nv-test/kernel/conftest.sh.orig	2026-08-07 16:32:54.339735930 +0300
-+++ /tmp/nv-test/kernel/conftest.sh	2026-08-07 16:55:03.050380768 +0300
+--- a/kernel/conftest.sh	2026-08-07 16:32:54.339735930 +0300
++++ b/kernel/conftest.sh	2026-08-07 16:55:03.050380768 +0300
 @@ -262,6 +262,15 @@
      fi
  
