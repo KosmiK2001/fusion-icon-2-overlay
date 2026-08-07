@@ -75,11 +75,20 @@ PATCHES=(
 )
 
 src_prepare() {
-	# Apply patches with --force since some have partial failures
-	# (0008, 0011, 0012, 0013) but their successful hunks are needed
+	# Patches 0008, 0011, 0012, 0013 have partial failures but their
+	# successful hunks are needed by subsequent patches.
+	# Use raw patch --force for these so we don't die on failed hunks.
 	local p
 	for p in "${PATCHES[@]}"; do
-		eapply --force "${p}"
+		case "$(basename "$p")" in
+			0008-*|0011-*|0012-*|0013-*)
+				ewarn "Applying $(basename "$p") with --force (partial)"
+				patch -p1 --force --no-backup-if-mismatch < "$p" || true
+				;;
+			*)
+				eapply "$p"
+				;;
+		esac
 	done
 	eapply_user
 }
