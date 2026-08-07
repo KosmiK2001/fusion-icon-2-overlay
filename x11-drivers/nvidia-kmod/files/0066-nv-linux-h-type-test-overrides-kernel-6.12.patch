@@ -1,6 +1,6 @@
 --- a/kernel/nv-linux.h	2026-08-07 16:32:54.334860872 +0300
-+++ b/kernel/nv-linux.h	2026-08-07 17:06:47.165954431 +0300
-@@ -12,8 +12,111 @@
++++ b/kernel/nv-linux.h	2026-08-07 17:22:57.703028921 +0300
+@@ -12,8 +12,143 @@
  #define _NV_LINUX_H_
  
  #include "nv.h"
@@ -12,6 +12,7 @@
 +#define NV_INIT_WORK_ARGUMENT_COUNT 2
 +#define NV_VMAP_PRESENT
 +#define NV_VMAP_ARGUMENT_COUNT 2
++#define NV_KMEM_CACHE_CREATE_PRESENT
 +#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
 +#define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
 +#define NV_SMP_CALL_FUNCTION_PRESENT
@@ -19,7 +20,7 @@
 +#define NV_ON_EACH_CPU_PRESENT
 +#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
 +#define NV_ACPI_WALK_NAMESPACE_PRESENT
-+#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6
++#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
 +#define NV_PCI_DMA_MAPPING_ERROR_PRESENT
 +#define NV_PCI_DMA_MAPPING_ERROR_ARGUMENT_COUNT 2
 +#define NV_PROC_OPS_PRESENT
@@ -43,6 +44,9 @@
 +#define NV_VMAP_ARGUMENT_COUNT 2
 +
 +/* kmem_cache_create takes 5 args since 3.17 */
++#ifndef NV_KMEM_CACHE_CREATE_PRESENT
++#define NV_KMEM_CACHE_CREATE_PRESENT
++#endif
 +#undef NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT
 +#define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5
 +#ifndef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT
@@ -61,11 +65,11 @@
 +#undef NV_ON_EACH_CPU_ARGUMENT_COUNT
 +#define NV_ON_EACH_CPU_ARGUMENT_COUNT 3
 +
-+/* acpi_walk_namespace takes 6 args */
++/* acpi_walk_namespace takes 7 args since 6.x (added flags param) */
 +#undef NV_ACPI_WALK_NAMESPACE_PRESENT
 +#define NV_ACPI_WALK_NAMESPACE_PRESENT
 +#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
-+#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6
++#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
 +
 +/* pci_dma_mapping_error takes 2 args since 2.6.28 */
 +#undef NV_PCI_DMA_MAPPING_ERROR_PRESENT
@@ -76,6 +80,34 @@
 +/* proc_ops replaces file_operations for proc since 5.6 */
 +#ifndef NV_PROC_OPS_PRESENT
 +#define NV_PROC_OPS_PRESENT
++#endif
++#ifndef NV_HAVE_PROC_OPS
++#define NV_HAVE_PROC_OPS
++#endif
++
++/* kmem_cache_create: _PRESENT must be defined for the macro chain to work */
++#ifndef NV_KMEM_CACHE_CREATE_PRESENT
++#define NV_KMEM_CACHE_CREATE_PRESENT
++#endif
++
++/* acpi_walk_namespace takes 7 args since 6.x (added flags param) */
++#undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT
++#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7
++
++/* pci_save_state takes 1 arg since 2.6.29 */
++#ifndef NV_PCI_SAVE_STATE_ARGUMENT_COUNT
++#define NV_PCI_SAVE_STATE_ARGUMENT_COUNT 1
++#endif
++
++/* get_user_pages takes 4 args (start, nr_pages, gup_flags, pages) since 5.8 */
++#ifdef NV_GET_USER_PAGES_HAS_TASK_STRUCT
++#undef NV_GET_USER_PAGES_HAS_TASK_STRUCT
++#endif
++#ifdef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS
++#undef NV_GET_USER_PAGES_HAS_WRITE_AND_FORCE_ARGS
++#endif
++#ifndef NV_GET_USER_PAGES_DROPPED_VMA
++#define NV_GET_USER_PAGES_DROPPED_VMA
 +#endif
 +
 +/* Type test overrides: conftest type tests fail to compile on 6.12+
@@ -112,7 +144,7 @@
  #if !defined(NV_VMWARE)
  #define NV_KERNEL_NAME "Linux"
  #else
-@@ -1993,13 +2096,13 @@
+@@ -1993,13 +2128,13 @@
  
  #define NV_PROC_OPS_SET_OWNER() .owner = THIS_MODULE,
  
@@ -133,7 +165,13 @@
  #if defined(NV_PROC_DIR_ENTRY_HAS_OWNER)
  #define NV_SET_PROC_ENTRY_OWNER(entry) ((entry)->owner = THIS_MODULE)
  #else
-@@ -2127,7 +2230,7 @@
+@@ -2121,13 +2256,12 @@
+         return single_open(filep, nv_procfs_read_##__name,                    \
+             NV_PDE_DATA(inode));                                              \
+     }                                                                         \
+-
+     static const nv_proc_ops_t nv_procfs_##__name##_fops = {                    \
+         NV_PROC_OPS_SET_OWNER()                                               \
          .NV_PROC_OPS_OPEN    = nv_procfs_open_##__name,                         \
          .NV_PROC_OPS_READ    = seq_read,                                      \
          .NV_PROC_OPS_LSEEK   = seq_lseek,                                     \
