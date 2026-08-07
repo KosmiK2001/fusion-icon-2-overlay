@@ -37,6 +37,9 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
+	eapply "${FILESDIR}/3d-performance.patch"
+	eapply "${FILESDIR}/stdlib-fix.patch"
+	eapply "${FILESDIR}/vidcap-fps.patch"
 	eautoreconf
 }
 
