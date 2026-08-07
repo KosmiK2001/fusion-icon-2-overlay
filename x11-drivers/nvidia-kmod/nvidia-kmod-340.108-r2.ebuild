@@ -110,6 +110,10 @@ src_prepare() {
 #define NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT 5\
 #undef NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT\
 #define NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT\
+#undef NV_VMAP_PRESENT\
+#define NV_VMAP_PRESENT\
+#undef NV_VMAP_ARGUMENT_COUNT\
+#define NV_VMAP_ARGUMENT_COUNT 4\
 #undef NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT\
 #define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7\
 #undef NV_PCI_SAVE_STATE_ARGUMENT_COUNT\
@@ -165,7 +169,10 @@ src_prepare() {
 	# 6. Fix NV_FILE_INODE: use f_inode
 	sed -i 's/(file)->f_dentry->d_inode/(file)->f_inode/' kernel/nv-linux.h
 
-	# 7. Fix NV_DEFINE_PROCFS_SINGLE_FILE: remove blank line breaking \ continuation
+	# 7. Fix NV_DEFINE_PROCFS_SINGLE_FILE: fix broken backslash continuation
+	#    Line has huge gap of spaces between two backslashes — collapse to single backslash
+	sed -i 's/single_release,                      \\                                                                              \\/single_release,                                    \\/' kernel/nv-linux.h
+	# Also remove any blank line after closing brace in the macro
 	sed -i '/^    }                                                                         \\$/{n;/^$/d}' kernel/nv-linux.h
 
 	# 8. Fix get_user_pages: modern 4-arg API
