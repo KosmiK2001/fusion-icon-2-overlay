@@ -37,6 +37,7 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
+	eapply "${FILESDIR}/addhelper-stdlib.patch"
 	eautoreconf
 }
 

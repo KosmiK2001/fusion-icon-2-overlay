@@ -1,0 +1,11 @@
+--- a/src/addhelper/addhelper.c
++++ b/src/addhelper/addhelper.c
+@@ -26,6 +26,8 @@
+ 
+ #include "addhelper_options.h"
+ 
++#include <stdlib.h>
++
+ typedef struct _AddHelperDisplay
+ {
+     int		    screenPrivateIndex;
