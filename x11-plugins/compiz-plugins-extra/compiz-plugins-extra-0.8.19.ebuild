@@ -39,8 +39,9 @@ src_prepare() {
 	default
 
 	# Fix implicit malloc/calloc/free declarations for GCC 14+
-	find src -name "*.c" -exec grep -l "malloc\|calloc\|free\|realloc" {} + | while read f; do
-		grep -q "stdlib.h" "$f" || sed -i '2a #include <stdlib.h>' "$f"
+	local f
+	for f in $(grep -rl "malloc\|calloc\|free\|realloc" src/ --include="*.c"); do
+		grep -q "stdlib.h" "${f}" || sed -i '1i #include <stdlib.h>' "${f}"
 	done
 
 	eautoreconf
