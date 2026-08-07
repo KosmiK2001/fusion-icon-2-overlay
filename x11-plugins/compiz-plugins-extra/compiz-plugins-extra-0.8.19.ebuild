@@ -44,6 +44,9 @@ src_prepare() {
 		grep -q "stdlib.h" "${f}" || sed -i '1i #include <stdlib.h>' "${f}"
 	done
 
+	# O_LARGEFILE not exposed without _GNU_SOURCE on some glibc
+	sed -i '1i #define _GNU_SOURCE' src/vidcap/vidcap.c
+
 	eautoreconf
 }
 
