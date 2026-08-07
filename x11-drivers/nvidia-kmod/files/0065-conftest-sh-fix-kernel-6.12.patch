@@ -61,7 +61,7 @@
              else
 -                echo "#error acpi_walk_namespace() conftest failed!" | append_conftest "functions"
 +                echo "#define NV_ACPI_WALK_NAMESPACE_PRESENT" | append_conftest "functions"
-+                echo "#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 6" | append_conftest "functions"
++                echo "#define NV_ACPI_WALK_NAMESPACE_ARGUMENT_COUNT 7" | append_conftest "functions"
              fi
          ;;
  
