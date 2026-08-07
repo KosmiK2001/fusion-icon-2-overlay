@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<longdescription lang="en">
+NVIDIA legacy driver 340.108 kernel module with community patches
+for kernels up to 6.6+. Patches from Ubuntu, Debian, AUR and community.
+	</longdescription>
+</pkgmetadata>
