@@ -192,10 +192,18 @@ src_prepare() {
 	# 12. Fix request_irq: ISR signature (no pt_regs since ~5.18)
 	sed -i 's/static irqreturn_t   nvidia_isr            (int, void \*, struct pt_regs \*);/static irqreturn_t   nvidia_isr            (int, void *);/' kernel/nv.c
 	sed -i 's/irqreturn_t nv_gvi_kern_isr             (int, void \*, struct pt_regs \*);/irqreturn_t nv_gvi_kern_isr             (int, void *);/' kernel/nv-proto.h
-	sed -i '/^nvidia_isr($/{N;N;N;s/(int irq,\n    void *arg,\n    struct pt_regs *regs)/(int irq,\n    void *arg)/}' kernel/nv.c
+	# Fix nvidia_isr function definition: remove pt_regs parameter
+	sed -i '/^nvidia_isr(/,/^)/{s/struct pt_regs \*//;s/, *\n)/\n)/}' kernel/nv.c
+	sed -i 's/nvidia_isr(\n    int irq,\n    void \*arg,\n    struct pt_regs \*regs)/nvidia_isr(\n    int irq,\n    void *arg)/' kernel/nv.c
+	# Simpler: just replace the whole function header
+	# Use perl for multi-line replacement of nvidia_isr definition
+	perl -0777 -i -pe 's/nvidia_isr\(\n\s+int irq,\n\s+void \*arg,\n\s+struct pt_regs \*\w+\)/nvidia_isr(\n    int irq,\n    void *arg)/gs' kernel/nv.c
 
 	# 13. Stub out acpi_bus_get_device (removed in 6.12)
-	sed -i 's/retVal = acpi_bus_get_device(nvif_parent_gpu_handle, &device);/retVal = -ENODEV;  \/\/ acpi_bus_get_device removed in 6.12/' kernel/nv-acpi.c
+	sed -i 's/acpi_bus_get_device(nvif_parent_gpu_handle, &device)/(-ENODEV)/g' kernel/nv-acpi.c
+
+	# 14. Fix ACPI_VIDEO_HID: char* → acpi_device_id array
+	sed -i 's/\.ids = ACPI_VIDEO_HID,/.ids = (const struct acpi_device_id []){ {ACPI_VIDEO_HID, 0}, {""} },/' kernel/nv-acpi.c
 
 	# Debug: dump state after all fixes
 	ebegin "Dumping post-fix nv-linux.h state"
