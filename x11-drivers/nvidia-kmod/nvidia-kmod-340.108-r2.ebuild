@@ -140,6 +140,7 @@ src_prepare() {
 #undef NV_IRQ_HANDLER_T_ARGUMENT_COUNT\
 #define NV_IRQ_HANDLER_T_ARGUMENT_COUNT 2\
 /* console_lock replaces acquire_console_sem since 2.6.38 */\
+#undef NV_ACQUIRE_CONSOLE_SEM_PRESENT\
 #undef NV_CONSOLE_LOCK_PRESENT\
 #define NV_CONSOLE_LOCK_PRESENT\
 /* mmap_sem renamed to mmap_lock since 5.8 */\
