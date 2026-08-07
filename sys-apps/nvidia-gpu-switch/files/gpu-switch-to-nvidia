@@ -2,9 +2,26 @@
 # Switch from nouveau to nvidia for display manager
 # nouveau handles boot splash (plymouth), nvidia handles X/3D
 
-echo "gpu-switch: Unloading nouveau..."
-modprobe -rf nouveau 2>/dev/null || true
+echo "gpu-switch: Unloading nouveau and dependencies..."
+
+# Unload nouveau and all dependent modules
+modprobe -rf nouveau 2>/dev/null
+modprobe -rf drm_ttm_helper 2>/dev/null
+modprobe -rf ttm 2>/dev/null
+modprobe -rf drm_gpuvm 2>/dev/null
+modprobe -rf gpu_sched 2>/dev/null
+modprobe -rf drm_exec 2>/dev/null
+modprobe -rf drm_display_helper 2>/dev/null
+modprobe -rf drm_kms_helper 2>/dev/null
+modprobe -rf drm 2>/dev/null
 sleep 1
+
+# Verify nouveau is gone
+if lsmod | grep -q nouveau; then
+    echo "gpu-switch: WARNING - nouveau still loaded, trying rmmod..."
+    rmmod nouveau 2>/dev/null || true
+    sleep 1
+fi
 
 echo "gpu-switch: Loading nvidia..."
 modprobe nvidia 2>/dev/null || true
