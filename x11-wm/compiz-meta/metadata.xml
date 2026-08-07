@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<email>kosmik2001@gmail.com</email>
+	<name>KosmiK2001</name>
+	<use>
+		<flag name="boxmenu">Enable compiz boxmenu</flag>
+		<flag name="ccsm">Enable ccsm support</flag>
+		<flag name="debugutils">Install extra tools for debugging Compiz</flag>
+		<flag name="emerald">Enable emerald window decorator</flag>
+		<flag name="full">Install all Compiz packages</flag>
+		<flag name="fusionicon">Enable fusion icon (v1) support</flag>
+		<flag name="fusionicon2">Enable Fusion Icon 2 (GTK3 system tray)</flag>
+		<flag name="manager">Enable compiz manager</flag>
+		<flag name="plugins">Install Compiz plugins meta-package</flag>
+		<flag name="simpleccsm">Enable simple ccsm</flag>
+	</use>
+	<longdescription>Compiz metapackage with optional Fusion Icon 2 support.</longdescription>
+</pkgmetadata>
