@@ -1,0 +1,92 @@
+diff '--color=auto' -Naru work-a/kernel/conftest.sh work-b/kernel/conftest.sh
+--- work-a/kernel/conftest.sh	2026-08-05 22:53:14.111967361 -0000
++++ work-b/kernel/conftest.sh	2026-08-05 22:56:09.967681335 -0000
+@@ -157,6 +157,7 @@
+     FILES="$FILES drm/drm_pci.h"
+     FILES="$FILES drm/drm_legacy.h"
+     FILES="$FILES drm/drm_agpsupport.h"
++    FILES="$FILES drm/drm_device.h"
+     FILES="$FILES generated/autoconf.h"
+     FILES="$FILES generated/compile.h"
+     FILES="$FILES generated/utsrelease.h"
+@@ -2472,6 +2473,29 @@
+             compile_check_conftest "$CODE" "NV_DRM_DRIVER_HAS_GEM_PRIME_CALLBACKS" "" "types"
+         ;;
+ 
++            drm_device_has_pdev)
++            #
++            # Determine if the 'drm_device' structure has a 'pdev' field.
++            #
++            # Removed by commit b347e04452ff ("drm: Remove pdev field from
++            # struct drm_device") in v5.14-rc1.
++            #
++            CODE="
++            #if defined(NV_DRM_DRMP_H_PRESENT)
++            #include <drm/drmP.h>
++            #endif
++
++            #if defined(NV_DRM_DRM_DEVICE_H_PRESENT)
++            #include <drm/drm_device.h>
++            #endif
++
++            int conftest_drm_device_has_pdev(void) {
++                return offsetof(struct drm_device, pdev);
++            }"
++
++            compile_check_conftest "$CODE" "NV_DRM_DEVICE_HAS_PDEV" "" "types"
++        ;;
++
+         # When adding a new conftest entry, please use the correct format for
+         # specifying the relevant upstream Linux kernel commit.
+         #
+diff '--color=auto' -Naru work-a/kernel/Makefile work-b/kernel/Makefile
+--- work-a/kernel/Makefile	2026-08-05 22:53:14.111967361 -0000
++++ work-b/kernel/Makefile	2026-08-05 22:54:57.351408065 -0000
+@@ -164,6 +164,7 @@
+ 	drm_driver_has_gem_free_object \
+ 	drm_prime_pages_to_sg_has_drm_device_arg \
+ 	drm_driver_has_gem_prime_callbacks \
++	drm_device_has_pdev \
+ 
+ #
+ # CFLAGS dependent on the type of builds (e.g. single/muliple module, debug)
+diff '--color=auto' -Naru work-a/kernel/nv-drm.c work-b/kernel/nv-drm.c
+--- work-a/kernel/nv-drm.c	2026-08-05 22:53:14.121967306 -0000
++++ work-b/kernel/nv-drm.c	2026-08-05 23:01:03.236092564 -0000
+@@ -244,7 +244,11 @@
+ 	if (ret)
+ 		goto err_free;
+ 
++#if defined(NV_DRM_DEVICE_HAS_PDEV)
+ 	dev->pdev = pdev;
++#else
++	dev->dev_private = pdev;
++#endif
+ #ifdef __alpha__
+ 	dev->hose = pdev->sysdata;
+ #endif
+@@ -373,7 +377,11 @@
+ 
+     for (nvl = nv_linux_devices; nvl != NULL; nvl = nvl->next)
+     {
++#if defined(NV_DRM_DEVICE_HAS_PDEV)
+         if (nvl->dev == dev->pdev)
++#else
++        if (nvl->dev == dev->dev_private)
++#endif
+         {
+             nvl->drm = dev;
+             return 0;
+@@ -396,8 +404,12 @@
+     nv_linux_state_t *nvl;
+ 
+     for (nvl = nv_linux_devices; nvl != NULL; nvl = nvl->next)
++#if defined(NV_DRM_DEVICE_HAS_PDEV)
+     {
+         if (nvl->dev == dev->pdev)
++#else
++        if (nvl->dev == dev->dev_private)
++#endif
+         {
+             BUG_ON(nvl->drm != dev);
+             nvl->drm = NULL;

@@ -1,0 +1,80 @@
+diff '--color=auto' -Naru work-a/kernel/conftest.sh work-b/kernel/conftest.sh
+--- work-a/kernel/conftest.sh	2026-08-05 22:44:19.178198679 -0000
++++ work-b/kernel/conftest.sh	2026-08-05 22:49:01.116671287 -0000
+@@ -1545,10 +1545,6 @@
+             #include <drm/drm_drv.h>
+             #endif
+ 
+-            #if defined(NV_DRM_DRM_PRIME_H_PRESENT)
+-            #include <drm/drm_prime.h>
+-            #endif
+-
+             #if !defined(CONFIG_DRM) && !defined(CONFIG_DRM_MODULE)
+             #error DRM not enabled
+             #endif
+@@ -2445,6 +2441,37 @@
+             compile_check_conftest "$CODE" "NV_DRM_PRIME_PAGES_TO_SG_HAS_DRM_DEVICE_ARG" "" "types"
+         ;;
+ 
++        drm_driver_has_gem_prime_callbacks)
++            #
++            # Determine if drm_driver structure has the GEM and PRIME callback
++            # function pointers.
++            #
++            # The GEM and PRIME callback are removed from drm_driver
++            # structure, by commit d693def4fd1c ("drm: Remove obsolete GEM and
++            # PRIME callbacks from struct drm_driver").
++            #
++            CODE="
++            #if defined(NV_DRM_DRMP_H_PRESENT)
++            #include <drm/drmP.h>
++            #endif
++
++            #if defined(NV_DRM_DRM_DRV_H_PRESENT)
++            #include <drm/drm_drv.h>
++            #endif
++
++            void conftest_drm_driver_has_gem_and_prime_callbacks(void) {
++                struct drm_driver drv;
++
++                drv.gem_prime_pin = 0;
++                drv.gem_prime_get_sg_table = 0;
++                drv.gem_prime_vmap = 0;
++                drv.gem_prime_vunmap = 0;
++                drv.gem_vm_ops = 0;
++            }"
++
++            compile_check_conftest "$CODE" "NV_DRM_DRIVER_HAS_GEM_PRIME_CALLBACKS" "" "types"
++        ;;
++
+         # When adding a new conftest entry, please use the correct format for
+         # specifying the relevant upstream Linux kernel commit.
+         #
+diff '--color=auto' -Naru work-a/kernel/Makefile work-b/kernel/Makefile
+--- work-a/kernel/Makefile	2026-08-05 22:44:19.158198787 -0000
++++ work-b/kernel/Makefile	2026-08-05 22:46:07.727610616 -0000
+@@ -163,6 +163,7 @@
+ 	vga_tryget \
+ 	drm_driver_has_gem_free_object \
+ 	drm_prime_pages_to_sg_has_drm_device_arg \
++	drm_driver_has_gem_prime_callbacks \
+ 
+ #
+ # CFLAGS dependent on the type of builds (e.g. single/muliple module, debug)
+diff '--color=auto' -Naru work-a/kernel/nv-drm.c work-b/kernel/nv-drm.c
+--- work-a/kernel/nv-drm.c	2026-08-05 22:44:19.178198679 -0000
++++ work-b/kernel/nv-drm.c	2026-08-05 22:50:04.229662708 -0000
+@@ -500,10 +500,13 @@
+ #endif
+ 
+     .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
++
++#if defined(NV_DRM_DRIVER_HAS_GEM_PRIME_CALLBACKS)
+     .gem_prime_export = drm_gem_prime_export,
+     .gem_prime_get_sg_table = nv_gem_prime_get_sg_table,
+     .gem_prime_vmap = nv_gem_prime_vmap,
+     .gem_prime_vunmap = nv_gem_prime_vunmap,
++#endif
+ 
+     .name = "nvidia-drm",
+     .desc = "NVIDIA DRM driver",

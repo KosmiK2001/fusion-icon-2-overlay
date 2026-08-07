@@ -1,0 +1,23 @@
+diff '--color=auto' -Naru work-a/kernel/nv-drm.c work-b/kernel/nv-drm.c
+--- work-a/kernel/nv-drm.c	2026-08-05 23:34:13.721975843 -0000
++++ work-b/kernel/nv-drm.c	2026-08-05 23:36:24.941264967 -0000
+@@ -523,7 +523,19 @@
+     .gem_free_object = nv_gem_free,
+ #endif
+ 
++/*
++ * linux-next commit 71a7974ac701 ("drm/prime: Unexport helpers for fd/handle
++ * conversion") unexports drm_gem_prime_handle_to_fd() and
++ * drm_gem_prime_fd_to_handle().
++ *
++ * Prior linux-next commit 6b85aa68d9d5 ("drm: Enable PRIME import/export for
++ * all drivers") made these helpers the default when .prime_handle_to_fd /
++ * .prime_fd_to_handle are unspecified, so it's fine to just skip specifying
++ * them if the helpers aren't present.
++ */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 6, 0)
+     .prime_handle_to_fd = drm_gem_prime_handle_to_fd,
++#endif
+ 
+ #if defined(NV_DRM_DRIVER_HAS_GEM_PRIME_CALLBACKS)
+     .gem_prime_export = drm_gem_prime_export,

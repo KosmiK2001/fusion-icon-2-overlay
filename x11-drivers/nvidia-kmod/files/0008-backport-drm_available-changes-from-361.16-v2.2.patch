@@ -1,0 +1,18 @@
+diff '--color=auto' -Naru work-a/kernel/conftest.sh work-b/kernel/conftest.sh
+--- work-a/kernel/conftest.sh	2026-08-06 01:33:21.739918373 -0000
++++ work-b/kernel/conftest.sh	2026-08-06 01:37:17.665306922 -0000
+@@ -1592,6 +1592,14 @@
+             void conftest_drm_available(void) {
+                 struct drm_driver drv;
+ 
++                /* 2013-01-15 89177644a7b6306e6084a89eab7e290f4bfef397 */
++                 drv.gem_prime_pin = 0;
++                 drv.gem_prime_get_sg_table = 0;
++                 drv.gem_prime_vmap = 0;
++                 drv.gem_prime_vunmap = 0;
++                 (void)drm_gem_prime_import;
++                 (void)drm_gem_prime_export;
++
+                 /* 2013-10-02 1bb72532ac260a2d3982b40bdd4c936d779d0d16 */
+                 (void)drm_dev_alloc;
+ 

@@ -1,0 +1,195 @@
+diff '--color=auto' -Naru work-a/kernel/conftest.sh work-b/kernel/conftest.sh
+--- work-a/kernel/conftest.sh	2026-08-05 23:21:08.306230805 -0000
++++ work-b/kernel/conftest.sh	2026-08-05 23:24:49.378366488 -0000
+@@ -2559,6 +2559,25 @@
+             compile_check_conftest "$CODE" "NV_ACPI_BUS_GET_DEVICE_PRESENT" "" "functions"
+         ;;
+ 
++        vm_area_struct_has_const_vm_flags)
++            #
++            # Determine if the 'vm_area_struct' structure has
++            # const 'vm_flags'.
++            #
++            # A union of '__vm_flags' and 'const vm_flags' was added 
++            # by commit bc292ab00f6c ("mm: introduce vma->vm_flags
++            # wrapper functions") in mm-stable branch (2023-02-09)
++            # of the akpm/mm maintainer tree.
++            #
++            CODE="
++            #include <linux/mm_types.h>
++            int conftest_vm_area_struct_has_const_vm_flags(void) {
++                return offsetof(struct vm_area_struct, __vm_flags);
++            }"
++
++            compile_check_conftest "$CODE" "NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS" "" "types"
++        ;;
++
+         # When adding a new conftest entry, please use the correct format for
+         # specifying the relevant upstream Linux kernel commit.
+         #
+diff '--color=auto' -Naru work-a/kernel/Makefile work-b/kernel/Makefile
+--- work-a/kernel/Makefile	2026-08-05 23:21:08.286230913 -0000
++++ work-b/kernel/Makefile	2026-08-05 23:23:13.508885857 -0000
+@@ -167,6 +167,7 @@
+ 	drm_driver_has_gem_prime_callbacks \
+ 	drm_device_has_pdev \
+ 	acpi_bus_get_device \
++	vm_area_struct_has_const_vm_flags \
+ 
+ #
+ # CFLAGS dependent on the type of builds (e.g. single/muliple module, debug)
+diff '--color=auto' -Naru work-a/kernel/nv-linux.h work-b/kernel/nv-linux.h
+--- work-a/kernel/nv-linux.h	2026-08-05 23:21:08.266231022 -0000
++++ work-b/kernel/nv-linux.h	2026-08-05 23:27:04.657633617 -0000
+@@ -2273,4 +2273,26 @@
+     #endif
+ #endif
+ 
++#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
++{
++    vm_flags_set(vma, flags);
++}
++
++static inline void nv_vm_flags_clear(struct vm_area_struct *vma, vm_flags_t flags)
++{
++    vm_flags_clear(vma, flags);
++}
++#else
++static inline void nv_vm_flags_set(struct vm_area_struct *vma, unsigned long flags)
++{
++    vma->vm_flags |= flags;
++}
++
++static inline void nv_vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
++{
++    vma->vm_flags &= ~flags;
++}
++#endif
++
+ #endif  /* _NV_LINUX_H_ */
+diff '--color=auto' -Naru work-a/kernel/nv-mmap.c work-b/kernel/nv-mmap.c
+--- work-a/kernel/nv-mmap.c	2019-12-11 22:04:24.000000000 -0000
++++ work-b/kernel/nv-mmap.c	2026-08-05 23:29:01.993664620 -0000
+@@ -312,7 +312,7 @@
+             goto done;
+         }
+ 
+-        vma->vm_flags |= VM_IO;
++        nv_vm_flags_set(vma, VM_IO);
+     }
+     else
+     {
+@@ -363,8 +363,8 @@
+ 
+         NV_PRINT_AT(NV_DBG_MEMINFO, at);
+ 
+-        vma->vm_flags |= (VM_IO | VM_LOCKED | VM_RESERVED);
+-        vma->vm_flags |= (VM_DONTEXPAND | VM_DONTDUMP);
++        nv_vm_flags_set(vma, VM_IO | VM_LOCKED | VM_RESERVED);
++        nv_vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP);
+     }
+ 
+     if (status == 0)
+@@ -374,8 +374,8 @@
+         if ((prot & NV_PROTECT_WRITEABLE) == 0)
+         {
+             vma->vm_page_prot = NV_PGPROT_READ_ONLY(vma->vm_page_prot);
+-            vma->vm_flags &= ~VM_WRITE;
+-            vma->vm_flags &= ~VM_MAYWRITE;
++            nv_vm_flags_clear(vma, VM_WRITE);
++            nv_vm_flags_clear(vma, VM_MAYWRITE);
+         }
+ 
+         vma->vm_ops = &nv_vm_ops;
+diff '--color=auto' -Naru work-a/kernel/uvm/Makefile work-b/kernel/uvm/Makefile
+--- work-a/kernel/uvm/Makefile	2026-08-05 23:21:08.116231834 -0000
++++ work-b/kernel/uvm/Makefile	2026-08-05 23:29:33.993491262 -0000
+@@ -175,6 +175,7 @@
+ 	proc_ops \
+ 	timeval \
+ 	mm_has_mmap_lock \
++	vm_area_struct_has_const_vm_flags \
+ 
+ MODULE_NAME:= nvidia-uvm
+ 
+diff '--color=auto' -Naru work-a/kernel/uvm/nvidia_uvm_linux.h work-b/kernel/uvm/nvidia_uvm_linux.h
+--- work-a/kernel/uvm/nvidia_uvm_linux.h	2026-08-05 23:21:08.199564716 -0000
++++ work-b/kernel/uvm/nvidia_uvm_linux.h	2026-08-05 23:30:44.129777968 -0000
+@@ -445,5 +445,27 @@
+ #define mmap_sem mmap_lock
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 0, 0)
++typedef unsigned long vm_flags_t;
++#endif
++
++static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
++{
++#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    vm_flags_set(vma, flags);
++#else
++    vma->vm_flags |= flags;
++#endif
++}
++
++static inline void nv_vm_flags_clear(struct vm_area_struct *vma, vm_flags_t flags)
++{
++#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    vm_flags_clear(vma, flags);
++#else
++    vma->vm_flags &= ~flags;
++#endif
++}
++
+ #endif // _NVIDIA_UVM_LINUX_H
+ 
+diff '--color=auto' -Naru work-a/kernel/uvm/nvidia_uvm_lite.c work-b/kernel/uvm/nvidia_uvm_lite.c
+--- work-a/kernel/uvm/nvidia_uvm_lite.c	2026-08-05 23:21:08.059565475 -0000
++++ work-b/kernel/uvm/nvidia_uvm_lite.c	2026-08-05 23:32:55.915730689 -0000
+@@ -1506,9 +1506,9 @@
+         vma->vm_ops   = &uvmlite_vma_ops;
+ 
+         // Prohibit copying the vma on fork().
+-        vma->vm_flags |= VM_DONTCOPY;
++        nv_vm_flags_set(vma, VM_DONTCOPY);
+         // Prohibt mremap() that would expand the vma.
+-        vma->vm_flags |= VM_DONTEXPAND;
++        nv_vm_flags_set(vma, VM_DONTEXPAND);
+ 
+         // Other cases of vma modification are detected in _mmap_open().
+ 
+@@ -1527,9 +1527,9 @@
+             return -EINVAL;
+ 
+         vma->vm_ops = &counters_vma_ops;
+-        vma->vm_flags &= ~VM_MAYWRITE;
++        nv_vm_flags_clear(vma, VM_MAYWRITE);
+         // prevent vm_insert_page from modifying the vma's flags:
+-        vma->vm_flags |= VM_MIXEDMAP;
++        nv_vm_flags_set(vma, VM_MIXEDMAP);
+         ret = 0;
+     }
+     UVM_DBG_PRINT_RL("vma 0x%p [0x%p, 0x%p) ret %d pgoff"
+@@ -2508,8 +2508,8 @@
+     // Subsequent access from userspace after the pages are unmapped will cause
+     // a SIGSEGV.
+     //
+-    vma->vm_flags &= ~(VM_READ|VM_MAYREAD);
+-    vma->vm_flags &= ~(VM_WRITE|VM_MAYWRITE);
++    nv_vm_flags_clear(vma, VM_READ|VM_MAYREAD);
++    nv_vm_flags_clear(vma, VM_WRITE|VM_MAYWRITE);
+ }
+ 
+ //
+@@ -2517,8 +2517,8 @@
+ //
+ static void _set_vma_accessible(struct vm_area_struct * vma)
+ {
+-    vma->vm_flags |= (VM_READ|VM_MAYREAD);
+-    vma->vm_flags |= (VM_WRITE|VM_MAYWRITE);
++    nv_vm_flags_set(vma, VM_READ|VM_MAYREAD);
++    nv_vm_flags_set(vma, VM_WRITE|VM_MAYWRITE);
+ }
+ 
+ //

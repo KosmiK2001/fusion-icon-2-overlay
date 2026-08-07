@@ -1,0 +1,67 @@
+diff '--color=auto' -Naru work-a/kernel/uvm/nvidia_uvm_lite_api.c work-b/kernel/uvm/nvidia_uvm_lite_api.c
+--- work-a/kernel/uvm/nvidia_uvm_lite_api.c	2019-12-11 22:04:24.000000000 -0000
++++ work-b/kernel/uvm/nvidia_uvm_lite_api.c	2026-08-05 23:57:31.171071878 -0000
+@@ -86,6 +86,7 @@
+ //
+ // Locking: you must hold a read / write lock on the mmap_sem.
+ //
++static
+ struct vm_area_struct *
+ find_counters_vma(unsigned long long requestedBase,
+     unsigned long long length,
+diff '--color=auto' -Naru work-a/kernel/uvm/nvidia_uvm_lite.c work-b/kernel/uvm/nvidia_uvm_lite.c
+--- work-a/kernel/uvm/nvidia_uvm_lite.c	2026-08-05 23:39:17.106998932 -0000
++++ work-b/kernel/uvm/nvidia_uvm_lite.c	2026-08-05 23:56:47.547974871 -0000
+@@ -204,6 +204,7 @@
+     kmem_cache_free(g_uvmStreamRecordCache, pStream);
+ }
+ 
++static
+ void _stop_and_destroy_leftover_streams(UvmProcessRecord *processRecord)
+ {
+     struct list_head *pos;
+@@ -691,6 +692,7 @@
+ //         return SIGBUS.
+ //      3. Otherwise, map in a page from the cache, and allow access.
+ //
++static
+ int _fault_common(struct vm_area_struct *vma, unsigned long vaddr,
+                   struct page **ppage, unsigned vmfFlags)
+ {
+@@ -819,6 +821,7 @@
+     return retValue;
+ }
+ 
++static
+ #if defined(NV_VM_OPERATIONS_STRUCT_HAS_FAULT)
+ int _fault(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
+@@ -867,6 +870,7 @@
+ // without setting vma_ops and fault handler, Linux kernel assumes
+ // it's dealing with anonymous mapping (see handle_pte_fault).
+ //
++static
+ #if defined(NV_VM_OPERATIONS_STRUCT_HAS_FAULT)
+ int _sigbus_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
+@@ -2460,7 +2464,7 @@
+                 {
+                     UVM_DBG_PRINT_RL("Failed to copy from cpu to gpu - vma: "
+                                      "0x%p, rmStatus: 0x%0x\n",
+-                                     pRecord->vma, rmStatus);    
++                                     pRecord->vma, rmStatus);
+                     break;
+                 }
+ 
+@@ -2489,9 +2493,11 @@
+                                         &numMethods);
+ 
+         if (rmStatus != RM_OK)
++        {
+             UVM_DBG_PRINT_RL("Failed to copy from cpu to gpu - vma: "
+                              "0x%p, rmStatus: 0x%0x\n",
+                              pRecord->vma, rmStatus);
++        }
+     }
+ 
+     rmStatus = _clear_cache_update_counters(pRecord, migratedPages);
