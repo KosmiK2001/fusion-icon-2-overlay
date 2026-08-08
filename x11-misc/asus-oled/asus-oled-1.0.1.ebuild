@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 
 IUSE="gtk3 module"
 
-REQUIRED_USE=""
+REQUIRED_USE="modules-compress? ( module )"
 
 DEPEND="
 	gtk3? ( x11-libs/gtk+:3 )
