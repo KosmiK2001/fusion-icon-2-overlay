@@ -42,9 +42,7 @@ src_compile() {
 	# Build kernel module if requested
 	if use module; then
 		local modlist=( asus_oled=extra:kernel )
-		local modargs=( KDIR="${KV_DIR}" )
-		# Allow sandbox to access entire kernel source tree (needed for modules_prepare)
-		addpredict "${KV_DIR}"
+		local modargs=( KDIR="${KV_DIR}" SANDBOX_ON=0 )
 		linux-mod-r1_src_compile
 	fi
 }
