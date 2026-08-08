@@ -41,7 +41,7 @@ src_compile() {
 
 	# Build kernel module if requested
 	if use module; then
-		local modlist=( asus_oled=extra )
+		local modlist=( asus_oled=kernel:extra )
 		local modargs=( KDIR="${KV_DIR}" )
 		linux-mod-r1_src_compile
 	fi
