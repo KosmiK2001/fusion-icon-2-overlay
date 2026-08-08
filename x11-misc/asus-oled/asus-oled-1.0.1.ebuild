@@ -43,10 +43,8 @@ src_compile() {
 	if use module; then
 		local modlist=( asus_oled=extra:kernel )
 		local modargs=( KDIR="${KV_DIR}" )
-		# Allow sandbox to write to kernel source tree (generated headers, scripts)
-		addwrite "${KV_DIR}/include/generated"
-		addwrite "${KV_DIR}/scripts"
-		addwrite "${KV_DIR}/.tmp_versions"
+		# Allow sandbox to write to entire kernel source tree
+		addwrite "${KV_DIR}"
 		linux-mod-r1_src_compile
 	fi
 }
