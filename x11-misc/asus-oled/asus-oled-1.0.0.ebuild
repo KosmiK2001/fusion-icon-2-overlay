@@ -14,9 +14,9 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="gtk3 module module-compress"
+IUSE="gtk3 module"
 
-REQUIRED_USE="module-compress? ( module )"
+REQUIRED_USE=""
 
 DEPEND="
 	gtk3? ( x11-libs/gtk+:3 )
@@ -63,9 +63,11 @@ src_install() {
 	# Install systemd service
 	systemd_dounit data/asus-oled-daemon.service
 
-	# Install desktop file if GTK3
+	# Install desktop file and icon if GTK3
 	if use gtk3; then
 		domenu data/asus-oled.desktop
+		insinto /usr/share/icons/hicolor/64x64/apps
+		doins data/icons/asus_oled_tray.png
 	fi
 }
 
