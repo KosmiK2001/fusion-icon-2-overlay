@@ -42,7 +42,12 @@ src_compile() {
 	# Build kernel module if requested
 	if use module; then
 		local modlist=( asus_oled=extra:kernel )
-		local modargs=( KDIR="${KV_DIR}" )
+		# Use gentoo-sources if available (dist-bin lacks full build support)
+		if [[ -d /usr/src/linux-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}-gentoo ]]; then
+			local modargs=( KDIR="/usr/src/linux-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}-gentoo" )
+		else
+			local modargs=( KDIR="${KV_DIR}" )
+		fi
 		linux-mod-r1_src_compile
 	fi
 }
