@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>kosmik2001@gmail.com</email>
+    <name>kosmik2001</name>
+  </maintainer>
+  <longdescription>
+    Kernel driver for ASUS OLED USB display found in ASUS G1/G2/G50 laptops.
+    Provides sysfs interface to enable/disable the OLED display.
+    Device: USB VID 0x0b05, PID 0x1726
+  </longdescription>
+  <upstream>
+    <remote-id type="github">epw/asus_oled</remote-id>
+  </upstream>
+</pkgmetadata>
