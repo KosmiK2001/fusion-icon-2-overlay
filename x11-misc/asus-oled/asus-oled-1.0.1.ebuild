@@ -44,8 +44,9 @@ src_compile() {
 		local modlist=( asus_oled=extra:kernel )
 		local modargs=( KDIR="${KV_DIR}" )
 		# Disable sandbox for kernel build (needs write to /usr/src)
-		local BUILD_FIXES="SANDBOX_ON=0"
+		export SANDBOX_ON=0
 		linux-mod-r1_src_compile
+		export SANDBOX_ON=1
 	fi
 }
 
