@@ -26,13 +26,6 @@ RDEPEND="${DEPEND}"
 
 src_prepare() {
 	default
-
-	# Patch kernel module source if module USE is set
-	if use module; then
-		cd "${S}/kernel" || die
-		eapply -p0 "${FILESDIR}/0001-fix-kernel-6.12.patch"
-		cd "${S}" || die
-	fi
 }
 
 src_configure() {
