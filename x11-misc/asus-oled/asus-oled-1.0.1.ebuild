@@ -42,12 +42,11 @@ src_compile() {
 	# Build kernel module if requested
 	if use module; then
 		local modlist=( asus_oled=extra:kernel )
-		local modargs=(
-			KDIR="${KV_DIR}"
-			SYSSRC="${KV_DIR}"
-			SYSOUT="${KV_OUT_DIR}"
-		)
+		local modargs=( KDIR="${KV_DIR}" )
+		# dist-bin kernel needs sandbox disabled for module build
+		export SANDBOX_ON=0
 		linux-mod-r1_src_compile
+		export SANDBOX_ON=1
 	fi
 }
 
