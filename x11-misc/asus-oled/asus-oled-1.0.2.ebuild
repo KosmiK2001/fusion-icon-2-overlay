@@ -41,14 +41,12 @@ src_compile() {
 
 	# Build kernel module if requested
 	if use module; then
-		# Copy kernel headers to writable location (dist-bin has read-only /usr/src)
-		local kbuild="${WORKDIR}/kernel-build"
-		cp -a "${KV_DIR}" "${kbuild}"
-		chmod -R u+w "${kbuild}"
-
+	# Build kernel module if requested
+	if use module; then
 		local modlist=( asus_oled=extra:kernel )
-		local modargs=( KDIR="${kbuild}" )
+		local modargs=( KDIR="${KV_DIR}" )
 		linux-mod-r1_src_compile
+	fi
 	fi
 }
 
