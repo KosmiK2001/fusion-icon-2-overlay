@@ -1,5 +1,5 @@
---- a/asus_oled.c
-+++ b/asus_oled.c
+--- asus_oled.c
++++ asus_oled.c
 @@ -574,10 +574,10 @@
  }
  
