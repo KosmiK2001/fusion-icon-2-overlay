@@ -41,12 +41,14 @@ src_compile() {
 
 	# Build kernel module if requested
 	if use module; then
+		# Copy kernel headers to writable location (dist-bin has read-only /usr/src)
+		local kbuild="${WORKDIR}/kernel-build"
+		cp -a "${KV_DIR}" "${kbuild}"
+		chmod -R u+w "${kbuild}"
+
 		local modlist=( asus_oled=extra:kernel )
-		local modargs=( KDIR="${KV_DIR}" )
-		# dist-bin kernel needs sandbox disabled for module build
-		export SANDBOX_ON=0
+		local modargs=( KDIR="${kbuild}" )
 		linux-mod-r1_src_compile
-		export SANDBOX_ON=1
 	fi
 }
 
