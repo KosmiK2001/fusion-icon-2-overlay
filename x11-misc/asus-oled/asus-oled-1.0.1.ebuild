@@ -43,9 +43,10 @@ src_compile() {
 	if use module; then
 		local modlist=( asus_oled=extra:kernel )
 		local modargs=( KDIR="${KV_DIR}" )
-		# Kernel build needs full write access to source tree
-		local BUILD_FIXES="FEATURES=-sandbox"
+		# Disable sandbox for kernel module build (needs write access to kernel tree)
+		export SANDBOX_ON=0
 		linux-mod-r1_src_compile
+		export SANDBOX_ON=1
 	fi
 }
 
